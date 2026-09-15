@@ -1,6 +1,3 @@
-原來是因為之前的版本「打卡時段」輸入的時間只會儲存文字，沒有自動幫你計算成總時數！
-我已經幫你加上了自動計算時數功能：現在只要你有填寫「上午上班/下班」或「下午上班/下班」的時間，系統就會自動幫你算出總時數並計入薪資（如果「快速填入時數」沒填的話），點擊日期與編輯也會完全連動！
-以下是為你更新好的完整 HTML 程式碼，請直接整篇複製並覆蓋到 GitHub 的 index.html 裡面：
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -9,7 +6,7 @@
     <title>工讀薪水與打卡系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { touch-action: manipulation; }
+        * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
         body { background-color: #121212; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         .bg-card { background-color: #1c1c1e; }
         .text-accent { color: #d6b290; }
@@ -17,6 +14,8 @@
         .bg-accent-dark { background-color: #3a2e26; color: #d6b290; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* 確保時間輸入框在手機上點擊範圍更大、更容易點開 */
+        input[type="time"] { cursor: pointer; }
     </style>
 </head>
 <body class="flex justify-center min-h-screen select-none">
@@ -103,7 +102,7 @@
                         <h1 class="text-xl font-bold">打卡打卡</h1>
                     </div>
                     <div class="flex space-x-2">
-                        <select id="punch-job-select" onchange="updatePunchJob()" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-full border border-gray-700 outline-none">
+                        <select id="punch-job-select" onchange="updatePunchJob()" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-full border border-gray-700 outline-none cursor-pointer">
                             <!-- 動態載入工作選項 -->
                         </select>
                     </div>
@@ -131,7 +130,7 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="clockIn()" id="btn-clock-in" class="bg-accent rounded-xl py-3 font-bold text-sm shadow">上班打卡</button>
+                        <button onclick="clockIn()" id="btn-clock-in" class="bg-accent rounded-xl py-3 font-bold text-sm shadow cursor-pointer">上班打卡</button>
                         <button onclick="clockOut()" id="btn-clock-out" class="bg-gray-800 text-gray-400 rounded-xl py-3 font-bold text-sm" disabled>下班打卡</button>
                     </div>
                 </div>
@@ -183,7 +182,7 @@
                     <div class="flex space-x-2 mb-4">
                         <input id="new-job-name" type="text" placeholder="工作名稱 (例: 圖書館工讀)" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-accent">
                         <input id="new-job-wage" type="number" placeholder="時薪 (例: 190)" class="w-24 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-accent">
-                        <button onclick="addJob()" class="bg-accent px-4 py-2 rounded-lg text-xs font-bold">新增</button>
+                        <button onclick="addJob()" class="bg-accent px-4 py-2 rounded-lg text-xs font-bold cursor-pointer">新增</button>
                     </div>
 
                     <!-- 工作列表 -->
@@ -196,24 +195,24 @@
                 <div class="bg-card rounded-2xl p-4 border border-gray-800 space-y-4">
                     <div class="flex justify-between items-center text-sm">
                         <span>自動扣除勞保</span>
-                        <input type="checkbox" class="accent-amber-600 w-4 h-4">
+                        <input type="checkbox" class="accent-amber-600 w-4 h-4 cursor-pointer">
                     </div>
                     <div class="flex justify-between items-center text-sm border-t border-gray-800 pt-3">
                         <span>自動扣除健保</span>
-                        <input type="checkbox" class="accent-amber-600 w-4 h-4">
+                        <input type="checkbox" class="accent-amber-600 w-4 h-4 cursor-pointer">
                     </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- 📅 1. 日期詳細資訊彈出面板 (Bottom Sheet Modal) -->
+        <!-- 📅 1. 日期詳細資訊彈出面板 -->
         <div id="day-modal" class="fixed inset-0 bg-black/70 z-50 flex flex-col justify-end hidden backdrop-blur-sm transition-all">
             <div class="bg-[#1c1c1e] rounded-t-3xl p-5 border-t border-gray-800 max-h-[85vh] flex flex-col shadow-2xl">
                 
                 <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
                     <h2 id="modal-date-title" class="text-lg font-bold text-white">2026年9月15日 週二</h2>
-                    <button onclick="closeDayModal()" class="w-7 h-7 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white font-bold">✕</button>
+                    <button onclick="closeDayModal()" class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white font-bold cursor-pointer">✕</button>
                 </div>
 
                 <!-- 工作標籤切換列 -->
@@ -229,18 +228,18 @@
                 </div>
 
                 <!-- 編輯 / 補打卡按鈕 -->
-                <button onclick="openEditModal()" class="mt-4 bg-accent rounded-xl py-3.5 font-bold text-sm text-center shadow-lg hover:opacity-90 transition-opacity">
+                <button onclick="openEditModal()" class="mt-4 bg-accent rounded-xl py-3.5 font-bold text-sm text-center shadow-lg hover:opacity-90 transition-opacity cursor-pointer">
                     📝 編輯 / 補打卡
                 </button>
             </div>
         </div>
 
-        <!-- 📝 2. 編輯與補打卡設定畫面 -->
+        <!-- 📝 2. 編輯與補打卡設定畫面 (完整可點擊與編輯) -->
         <div id="edit-modal" class="fixed inset-0 bg-[#121212] z-50 flex flex-col hidden overflow-y-auto">
             <div class="flex justify-between items-center px-4 py-4 border-b border-gray-800 sticky top-0 bg-[#121212]/95 backdrop-blur-md z-10">
-                <button onclick="closeEditModal()" class="text-gray-300 text-sm font-medium">取消</button>
+                <button onclick="closeEditModal()" class="text-gray-300 text-sm font-medium px-3 py-1 cursor-pointer">取消</button>
                 <h2 class="text-base font-bold text-white">編輯 / 補打卡</h2>
-                <button onclick="saveEditModal()" class="text-accent text-sm font-bold">儲存</button>
+                <button onclick="saveEditModal()" class="text-accent text-sm font-bold px-3 py-1 cursor-pointer">儲存</button>
             </div>
 
             <div class="p-4 space-y-4 pb-20">
@@ -275,25 +274,25 @@
                     </div>
                 </div>
 
-                <!-- 打卡時段 -->
+                <!-- 打卡時段 (已放大點擊範圍與優化互動) -->
                 <div class="bg-card rounded-2xl p-4 border border-gray-800 space-y-3">
-                    <div class="text-xs text-gray-400 mb-1">打卡時段 (自動計算時數)</div>
+                    <div class="text-xs text-gray-400 mb-1">打卡時段 (點擊時間即可選擇並自動計算時數)</div>
                     
                     <div class="flex justify-between items-center py-2 border-b border-gray-800">
                         <span class="text-sm text-gray-300">上午上班</span>
-                        <input id="time-in-1" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none">
+                        <input id="time-in-1" type="time" class="bg-gray-800 text-sm text-accent px-4 py-2 rounded-xl border border-gray-700 outline-none cursor-pointer">
                     </div>
                     <div class="flex justify-between items-center py-2 border-b border-gray-800">
                         <span class="text-sm text-gray-300">上午下班</span>
-                        <input id="time-out-1" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none">
+                        <input id="time-out-1" type="time" class="bg-gray-800 text-sm text-accent px-4 py-2 rounded-xl border border-gray-700 outline-none cursor-pointer">
                     </div>
                     <div class="flex justify-between items-center py-2 border-b border-gray-800">
                         <span class="text-sm text-gray-300">下午上班</span>
-                        <input id="time-in-2" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none">
+                        <input id="time-in-2" type="time" class="bg-gray-800 text-sm text-accent px-4 py-2 rounded-xl border border-gray-700 outline-none cursor-pointer">
                     </div>
                     <div class="flex justify-between items-center py-2">
                         <span class="text-sm text-gray-300">下午下班</span>
-                        <input id="time-out-2" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none">
+                        <input id="time-out-2" type="time" class="bg-gray-800 text-sm text-accent px-4 py-2 rounded-xl border border-gray-700 outline-none cursor-pointer">
                     </div>
                 </div>
             </div>
@@ -302,23 +301,23 @@
         <!-- 底部導覽列 -->
         <div class="absolute bottom-0 w-full px-4 pb-6 pt-2 bg-[#121212]/95 backdrop-blur-md border-t border-gray-800">
             <div class="flex justify-between items-center bg-card rounded-full px-2 py-1.5 border border-gray-800 shadow-xl">
-                <button onclick="switchTab('record')" id="nav-record" class="flex flex-col items-center py-1 text-accent w-1/5 transition-all">
+                <button onclick="switchTab('record')" id="nav-record" class="flex flex-col items-center py-1 text-accent w-1/5 transition-all cursor-pointer">
                     <span class="text-lg">📅</span>
                     <span class="text-[10px] mt-0.5 font-medium">紀錄</span>
                 </button>
-                <button onclick="switchTab('schedule')" id="nav-schedule" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all">
+                <button onclick="switchTab('schedule')" id="nav-schedule" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all cursor-pointer">
                     <span class="text-lg">📋</span>
                     <span class="text-[10px] mt-0.5 font-medium">排班</span>
                 </button>
-                <button onclick="switchTab('punch')" id="nav-punch" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all">
+                <button onclick="switchTab('punch')" id="nav-punch" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all cursor-pointer">
                     <span class="text-lg">⏱️</span>
                     <span class="text-[10px] mt-0.5 font-medium">打卡</span>
                 </button>
-                <button onclick="switchTab('stats')" id="nav-stats" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all">
+                <button onclick="switchTab('stats')" id="nav-stats" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all cursor-pointer">
                     <span class="text-lg">📊</span>
                     <span class="text-[10px] mt-0.5 font-medium">統計</span>
                 </button>
-                <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all">
+                <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all cursor-pointer">
                     <span class="text-lg">⚙️</span>
                     <span class="text-[10px] mt-0.5 font-medium">設定</span>
                 </button>
@@ -540,7 +539,6 @@
             document.getElementById('edit-modal').classList.add('hidden');
         }
 
-        // 計算時間差（小時）
         function calculateDuration(timeIn, timeOut) {
             if (!timeIn || !timeOut) return 0;
             let [h1, m1] = timeIn.split(':').map(Number);
@@ -626,7 +624,7 @@
                             <div class="font-bold text-white text-xs">${job.name}</div>
                             <div class="text-[10px] text-accent mt-0.5">時薪 NT$${job.wage}</div>
                         </div>
-                        <button onclick="deleteJob(${job.id})" class="text-red-400 text-xs px-2 py-1 rounded bg-red-950/40 hover:bg-red-900/50">刪除</button>
+                        <button onclick="deleteJob(${job.id})" class="text-red-400 text-xs px-2 py-1 rounded bg-red-950/40 hover:bg-red-900/50 cursor-pointer">刪除</button>
                     </div>
                 `;
             });
@@ -685,15 +683,15 @@
 
             if (punchState.inTime && !punchState.outTime) {
                 btnIn.className = "bg-gray-800 text-gray-500 rounded-xl py-3 font-bold text-sm cursor-not-allowed";
-                btnOut.className = "bg-accent text-gray-900 rounded-xl py-3 font-bold text-sm shadow animate-pulse";
+                btnOut.className = "bg-accent text-gray-900 rounded-xl py-3 font-bold text-sm shadow animate-pulse cursor-pointer";
                 btnOut.removeAttribute('disabled');
             } else if (punchState.outTime) {
-                btnIn.className = "bg-accent rounded-xl py-3 font-bold text-sm shadow";
+                btnIn.className = "bg-accent rounded-xl py-3 font-bold text-sm shadow cursor-pointer";
                 btnOut.className = "bg-gray-800 text-gray-500 rounded-xl py-3 font-bold text-sm cursor-not-allowed";
                 btnOut.setAttribute('disabled', 'true');
             } else {
-                btnIn.className = "bg-accent rounded-xl py-3 font-bold text-sm shadow";
-                btnOut.className = "bg-gray-800 text-gray-400 rounded-xl py-3 font-bold text-sm";
+                btnIn.className = "bg-accent rounded-xl py-3 font-bold text-sm shadow cursor-pointer";
+                btnOut.className = "bg-gray-800 text-gray-400 rounded-xl py-3 font-bold text-sm cursor-not-allowed";
                 btnOut.setAttribute('disabled', 'true');
             }
         }
@@ -747,4 +745,3 @@
     </script>
 </body>
 </html>
-
