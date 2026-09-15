@@ -55,19 +55,19 @@
                 <!-- 本月總結小卡 -->
                 <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 grid grid-cols-4 text-center items-center">
                     <div>
-                        <div id="stat-days" class="text-lg font-bold">1</div>
+                        <div id="stat-days" class="text-lg font-bold">0</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">出勤天數</div>
                     </div>
                     <div>
-                        <div id="stat-hours" class="text-lg font-bold text-accent">7h</div>
+                        <div id="stat-hours" class="text-lg font-bold text-accent">0h</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">總時數</div>
                     </div>
                     <div>
-                        <div class="text-lg font-bold">0</div>
+                        <div id="stat-double-days" class="text-lg font-bold">0</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">雙倍薪資</div>
                     </div>
                     <div>
-                        <div id="stat-income" class="text-sm font-bold text-green-400">NT$1,372</div>
+                        <div id="stat-income" class="text-sm font-bold text-green-400">NT$0</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">本月收入</div>
                     </div>
                 </div>
@@ -108,9 +108,9 @@
 
                 <!-- 收入預覽 -->
                 <div class="flex flex-col items-center justify-center my-6 bg-card rounded-2xl p-6 border border-gray-800 relative">
-                    <div class="text-xs text-gray-400 mb-1">週二 9月15日</div>
+                    <div class="text-xs text-gray-400 mb-1">今日預估收入</div>
                     <div id="today-income-display" class="text-4xl font-bold mb-1 tracking-wider text-accent">NT$0</div>
-                    <div class="text-xs text-gray-400">今日預估收入 (<span id="current-job-wage">時薪 NT$196</span>)</div>
+                    <div class="text-xs text-gray-400">(<span id="current-job-wage">時薪 NT$196</span>)</div>
                     <div id="today-hours-display" class="text-xs text-green-400 mt-2">已累積時數：0 小時</div>
                 </div>
 
@@ -138,21 +138,21 @@
             <div id="page-stats" class="tab-page hidden">
                 <div class="text-center my-4">
                     <div class="text-xs text-gray-400">本月累計收入</div>
-                    <div id="stats-total-income" class="text-4xl font-bold text-accent my-1">NT$1,372</div>
-                    <div class="text-xs text-gray-400">本月已出勤 1 天 · 累計 7h</div>
+                    <div id="stats-total-income" class="text-4xl font-bold text-accent my-1">NT$0</div>
+                    <div id="stats-summary-text" class="text-xs text-gray-400">本月已出勤 0 天 · 累計 0h</div>
                 </div>
 
                 <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 grid grid-cols-3 gap-4 text-center">
                     <div>
-                        <div class="text-lg font-bold">7h</div>
+                        <div id="stats-total-hours" class="text-lg font-bold">0h</div>
                         <div class="text-[10px] text-gray-400 mt-1">總時數</div>
                     </div>
                     <div>
-                        <div class="text-lg font-bold">7h</div>
+                        <div id="stats-avg-hours" class="text-lg font-bold">0h</div>
                         <div class="text-[10px] text-gray-400 mt-1">日均工時</div>
                     </div>
                     <div>
-                        <div class="text-lg font-bold">1</div>
+                        <div id="stats-total-days" class="text-lg font-bold">0</div>
                         <div class="text-[10px] text-gray-400 mt-1">出勤天數</div>
                     </div>
                 </div>
@@ -204,32 +204,99 @@
 
         </div>
 
-        <!-- 📅 日期詳細資訊彈出面板 (Bottom Sheet Modal) -->
+        <!-- 📅 1. 日期詳細資訊彈出面板 (Bottom Sheet Modal) -->
         <div id="day-modal" class="fixed inset-0 bg-black/70 z-50 flex flex-col justify-end hidden backdrop-blur-sm transition-all">
-            <div class="bg-[#1c1c1e] rounded-t-3xl p-5 border-t border-gray-800 max-h-[85vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-200">
+            <div class="bg-[#1c1c1e] rounded-t-3xl p-5 border-t border-gray-800 max-h-[85vh] flex flex-col shadow-2xl">
                 
-                <!-- 彈跳視窗標題與關閉按鈕 -->
                 <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
                     <h2 id="modal-date-title" class="text-lg font-bold text-white">2026年9月15日 週二</h2>
                     <button onclick="closeDayModal()" class="w-7 h-7 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white font-bold">✕</button>
                 </div>
 
-                <!-- 工作標籤列 (動態載入所有工作) -->
+                <!-- 工作標籤切換列 -->
                 <div id="modal-job-pills" class="flex space-x-2 overflow-x-auto no-scrollbar mb-4 pb-1">
                     <!-- 動態帶入工作按鈕 -->
                 </div>
 
                 <!-- 當日紀錄詳情卡片 -->
-                <div class="bg-gray-800/60 rounded-2xl p-6 border border-gray-700/50 flex flex-col items-center justify-center text-center my-2">
+                <div id="modal-record-content" class="bg-gray-800/60 rounded-2xl p-6 border border-gray-700/50 flex flex-col items-center justify-center text-center my-2">
                     <div class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center text-xl mb-2 text-accent">🕒</div>
                     <div class="text-sm font-semibold text-gray-300">尚無紀錄</div>
                     <div class="text-xs text-gray-500 mt-1">這一天還沒有建立打卡或排班資料</div>
                 </div>
 
-                <!-- 編輯 / 補打卡按鈕 -->
-                <button onclick="closeDayModal()" class="mt-4 bg-accent rounded-xl py-3.5 font-bold text-sm text-center shadow-lg hover:opacity-90 transition-opacity">
+                <!-- 編輯 / 補打卡按鈕 (點擊跳轉到第二個編輯畫面) -->
+                <button onclick="openEditModal()" class="mt-4 bg-accent rounded-xl py-3.5 font-bold text-sm text-center shadow-lg hover:opacity-90 transition-opacity">
                     📝 編輯 / 補打卡
                 </button>
+            </div>
+        </div>
+
+        <!-- 📝 2. 編輯與補打卡設定畫面 (對應第二張截圖) -->
+        <div id="edit-modal" class="fixed inset-0 bg-[#121212] z-50 flex flex-col hidden overflow-y-auto">
+            <!-- 頂部導覽列 -->
+            <div class="flex justify-between items-center px-4 py-4 border-b border-gray-800 sticky top-0 bg-[#121212]/95 backdrop-blur-md z-10">
+                <button onclick="closeEditModal()" class="text-gray-300 text-sm font-medium">取消</button>
+                <h2 class="text-base font-bold text-white">編輯 / 補打卡</h2>
+                <button onclick="saveEditModal()" class="text-accent text-sm font-bold">儲存</button>
+            </div>
+
+            <!-- 內容區塊 -->
+            <div class="p-4 space-y-4 pb-20">
+                <!-- 日期與工作提示 -->
+                <div class="bg-card rounded-2xl p-4 border border-gray-800 flex items-center space-x-3">
+                    <div class="text-2xl">📅</div>
+                    <div>
+                        <div id="edit-date-title" class="text-sm font-bold text-white">2026年9月15日 週二</div>
+                        <div id="edit-job-title" class="text-xs text-accent mt-0.5">國科會</div>
+                    </div>
+                </div>
+
+                <!-- 快速填入時數 -->
+                <div class="bg-card rounded-2xl p-4 border border-gray-800">
+                    <div class="text-xs text-gray-400 mb-2">快速填入時數</div>
+                    <div class="flex items-center space-x-2">
+                        <input id="edit-quick-hours" type="number" placeholder="輸入小時數 (例: 7)" class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-accent">
+                    </div>
+                    <div class="text-[10px] text-gray-500 mt-2">不計入打卡時段，獨立計算</div>
+                </div>
+
+                <!-- 雙倍薪資 -->
+                <div class="bg-card rounded-2xl p-4 border border-gray-800 flex justify-between items-center">
+                    <span class="text-sm font-medium text-white">雙倍薪資</span>
+                    <input id="edit-double-pay" type="checkbox" class="w-5 h-5 accent-[#d6b290] rounded cursor-pointer">
+                </div>
+
+                <!-- 打卡模式 -->
+                <div class="bg-card rounded-2xl p-4 border border-gray-800 flex justify-between items-center">
+                    <span class="text-sm font-medium text-white">打卡模式</span>
+                    <div class="flex items-center space-x-1 text-xs text-gray-300 bg-gray-800 px-3 py-1.5 rounded-full border border-gray-700">
+                        <span>⚙️</span>
+                        <span>上下午分班制 ↕</span>
+                    </div>
+                </div>
+
+                <!-- 打卡時段 -->
+                <div class="bg-card rounded-2xl p-4 border border-gray-800 space-y-3">
+                    <div class="text-xs text-gray-400 mb-1">打卡時段</div>
+                    
+                    <div class="flex justify-between items-center py-2 border-b border-gray-800">
+                        <span class="text-sm text-gray-300">上午上班</span>
+                        <input id="time-in-1" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none">
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-800">
+                        <span class="text-sm text-gray-300">上午下班</span>
+                        <input id="time-out-1" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none">
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-800">
+                        <span class="text-sm text-gray-300">下午上班</span>
+                        <input id="time-in-2" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none">
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-sm text-gray-300">下午下班</span>
+                        <input id="time-out-2" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -262,10 +329,14 @@
     </div>
 
     <script>
+        // 資料初始化
         let jobs = JSON.parse(localStorage.getItem('jobs')) || [
             { id: 1, name: '國科會', wage: 196 },
             { id: 2, name: '主要工讀', wage: 185 }
         ];
+
+        // 儲存每天每份工作的紀錄：格式 { "9-15_1": { hours: 7, doublePay: false, in1, out1, in2, out2 } }
+        let records = JSON.parse(localStorage.getItem('records')) || {};
 
         let punchState = JSON.parse(localStorage.getItem('punchState')) || {
             inTime: null,
@@ -273,6 +344,11 @@
             activeJobId: jobs[0]?.id || 1,
             isClockedIn: false
         };
+
+        // 當前選中的日期與工作
+        let currentDay = 15;
+        let currentWeekday = '二';
+        let activeModalJobId = jobs[0]?.id || 1;
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-page').forEach(page => page.classList.add('hidden'));
@@ -287,35 +363,42 @@
             if (tabId === 'settings') renderJobList();
             if (tabId === 'punch') updatePunchUI();
             if (tabId === 'stats') updateStatsUI();
-            if (tabId === 'record') renderCalendar();
+            if (tabId === 'record') {
+                renderCalendar();
+                updateMonthlySummary();
+            }
         }
 
-        // 渲染 2026年9月 月曆 (支援點擊彈出面板)
+        // 渲染 2026年9月 月曆
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = '';
             const firstDayIndex = 2; // 9月1日星期二
             const totalDays = 30;
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
 
             for (let i = 0; i < firstDayIndex; i++) {
                 grid.innerHTML += `<div></div>`;
             }
 
-            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-
             for (let day = 1; day <= totalDays; day++) {
-                let isWorked = (day === 1);
-                let isSelected = (day === 15);
-                
-                // 計算星期幾 (2026/9/1 是星期二，依序遞增)
                 let dayOfWeekIndex = (firstDayIndex + day - 1) % 7;
                 let weekdayStr = weekdays[dayOfWeekIndex];
 
+                // 計算這一天所有工作的總時數
+                let totalDayHours = 0;
+                jobs.forEach(job => {
+                    let key = `${day}_${job.id}`;
+                    if (records[key] && records[key].hours) {
+                        totalDayHours += parseFloat(records[key].hours);
+                    }
+                });
+
+                let isWorked = totalDayHours > 0;
+                
                 let classes = "h-9 w-9 mx-auto flex flex-col items-center justify-center rounded-xl text-sm transition-all cursor-pointer ";
-                if (isSelected) {
-                    classes += "border border-accent text-accent font-bold bg-[#3a2e26]/40";
-                } else if (isWorked) {
-                    classes += "bg-gray-800 text-white font-bold";
+                if (isWorked) {
+                    classes += "bg-gray-800 text-white font-bold border border-accent/40";
                 } else {
                     classes += "text-gray-300 hover:bg-gray-800/50";
                 }
@@ -323,41 +406,186 @@
                 grid.innerHTML += `
                     <div onclick="openDayModal(${day}, '${weekdayStr}')" class="${classes}">
                         <span>${day}</span>
-                        ${isWorked ? '<span class="text-[9px] text-accent font-normal">7h</span>' : ''}
+                        ${isWorked ? `<span class="text-[9px] text-accent font-normal">${totalDayHours}h</span>` : ''}
                     </div>
                 `;
             }
+            updateMonthlySummary();
+        }
+
+        // 計算並更新本月總結數據
+        function updateMonthlySummary() {
+            let totalDaysSet = new Set();
+            let totalHours = 0;
+            let totalDoubleDays = 0;
+            let totalIncome = 0;
+            let jobHoursMap = {};
+
+            jobs.forEach(job => jobHoursMap[job.id] = 0);
+
+            for (let key in records) {
+                let rec = records[key];
+                let [day, jobId] = key.split('_').map(Number);
+                let job = jobs.find(j => j.id === jobId);
+                if (job && rec.hours) {
+                    let h = parseFloat(rec.hours);
+                    totalDaysSet.add(day);
+                    totalHours += h;
+                    jobHoursMap[jobId] = (jobHoursMap[jobId] || 0) + h;
+
+                    let wageMultiplier = rec.doublePay ? 2 : 1;
+                    if (rec.doublePay) totalDoubleDays++;
+                    totalIncome += h * job.wage * wageMultiplier;
+                }
+            }
+
+            document.getElementById('stat-days').innerText = totalDaysSet.size;
+            document.getElementById('stat-hours').innerText = totalHours + 'h';
+            document.getElementById('stat-double-days').innerText = totalDoubleDays;
+            document.getElementById('stat-income').innerText = 'NT$' + totalIncome.toLocaleString();
         }
 
         // 開啟日期詳細面板
         function openDayModal(day, weekday) {
+            currentDay = day;
+            currentWeekday = weekday;
             const modal = document.getElementById('day-modal');
-            const title = document.getElementById('modal-date-title');
-            const jobPillsContainer = document.getElementById('modal-job-pills');
+            document.getElementById('modal-date-title').innerText = `2026年9月${day}日 週${weekday}`;
 
-            title.innerText = `2026年9月${day}日 週${weekday}`;
+            renderModalJobPills();
+            modal.classList.remove('hidden');
+        }
 
-            // 動態產生工作 pills (模擬截圖中的工作分類按鈕)
-            jobPillsContainer.innerHTML = '';
-            jobs.forEach((job, index) => {
-                let activeClass = index === 0 ? 'bg-[#3a2e26] border border-accent text-accent font-bold' : 'bg-gray-800 text-gray-300 border border-gray-700';
-                jobPillsContainer.innerHTML += `
-                    <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs whitespace-nowrap ${activeClass}">
+        function closeDayModal() {
+            document.getElementById('day-modal').classList.add('hidden');
+            renderCalendar();
+        }
+
+        // 渲染彈出面板裡的工作切換按鈕
+        function renderModalJobPills() {
+            const container = document.getElementById('modal-job-pills');
+            container.innerHTML = '';
+            
+            if (jobs.length === 0) return;
+            if (!jobs.some(j => j.id === activeModalJobId)) {
+                activeModalJobId = jobs[0].id;
+            }
+
+            jobs.forEach(job => {
+                let isActive = job.id === activeModalJobId;
+                let activeClass = isActive ? 'bg-[#3a2e26] border border-accent text-accent font-bold' : 'bg-gray-800 text-gray-300 border border-gray-700';
+                
+                container.innerHTML += `
+                    <div onclick="selectModalJob(${job.id})" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs whitespace-nowrap cursor-pointer ${activeClass}">
                         <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
                         <span>${job.name}</span>
                     </div>
                 `;
             });
 
-            modal.classList.remove('hidden');
+            renderModalRecordContent();
         }
 
-        // 關閉日期詳細面板
-        function closeDayModal() {
-            const modal = document.getElementById('day-modal');
-            modal.classList.add('hidden');
+        function selectModalJob(jobId) {
+            activeModalJobId = jobId;
+            renderModalJobPills();
         }
 
+        // 渲染彈出面板內當日該工作的詳細紀錄
+        function renderModalRecordContent() {
+            const contentContainer = document.getElementById('modal-record-content');
+            let key = `${currentDay}_${activeModalJobId}`;
+            let rec = records[key];
+
+            if (rec && rec.hours) {
+                let job = jobs.find(j => j.id === activeModalJobId);
+                let wageMultiplier = rec.doublePay ? 2 : 1;
+                let income = rec.hours * (job ? job.wage : 196) * wageMultiplier;
+
+                contentContainer.innerHTML = `
+                    <div class="w-full text-left space-y-2">
+                        <div class="flex justify-between items-center text-sm font-bold text-white border-b border-gray-700 pb-2">
+                            <span>${job ? job.name : ''}</span>
+                            <span class="text-accent">${rec.hours} 小時 ${rec.doublePay ? '(雙倍薪資)' : ''}</span>
+                        </div>
+                        <div class="text-xs text-gray-400 flex justify-between">
+                            <span>上班打卡: ${rec.in1 || '未設定'}</span>
+                            <span>下班打卡: ${rec.out1 || '未設定'}</span>
+                        </div>
+                        <div class="text-xs text-gray-400 flex justify-between">
+                            <span>下午上班: ${rec.in2 || '未設定'}</span>
+                            <span>下午下班: ${rec.out2 || '未設定'}</span>
+                        </div>
+                        <div class="text-sm font-bold text-green-400 pt-2 text-right">
+                            預估收入：NT$ ${income.toLocaleString()}
+                        </div>
+                    </div>
+                `;
+            } else {
+                contentContainer.innerHTML = `
+                    <div class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center text-xl mb-2 text-accent">🕒</div>
+                    <div class="text-sm font-semibold text-gray-300">尚無紀錄</div>
+                    <div class="text-xs text-gray-500 mt-1">這一天還沒有建立打卡或排班資料</div>
+                `;
+            }
+        }
+
+        // 開啟第二張圖的編輯設定畫面
+        function openEditModal() {
+            const editModal = document.getElementById('edit-modal');
+            document.getElementById('edit-date-title').innerText = `2026年9月${currentDay}日 週${currentWeekday}`;
+            
+            let job = jobs.get ? null : jobs.find(j => j.id === activeModalJobId);
+            document.getElementById('edit-job-title').innerText = job ? job.name : '工作';
+
+            let key = `${currentDay}_${activeModalJobId}`;
+            let rec = records[key] || {};
+
+            document.getElementById('edit-quick-hours').value = rec.hours || '';
+            document.getElementById('edit-double-pay').checked = rec.doublePay || false;
+            document.getElementById('time-in-1').value = rec.in1 || '';
+            document.getElementById('time-out-1').value = rec.out1 || '';
+            document.getElementById('time-in-2').value = rec.in2 || '';
+            document.getElementById('time-out-2').value = rec.out2 || '';
+
+            editModal.classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+        }
+
+        // 儲存編輯設定
+        function saveEditModal() {
+            let hours = document.getElementById('edit-quick-hours').value;
+            let doublePay = document.getElementById('edit-double-pay').checked;
+            let in1 = document.getElementById('time-in-1').value;
+            let out1 = document.getElementById('time-out-1').value;
+            let in2 = document.getElementById('time-in-2').value;
+            let out2 = document.getElementById('time-out-2').value;
+
+            let key = `${currentDay}_${activeModalJobId}`;
+            
+            if (!hours && (in1 || out1 || in2 || out2)) {
+                // 如果有填時段但沒填總時數，預設算7小時或自動計算
+                hours = 7;
+            }
+
+            records[key] = {
+                hours: hours ? parseFloat(hours) : 0,
+                doublePay,
+                in1, out1, in2, out2
+            };
+
+            localStorage.setItem('records', JSON.stringify(records));
+
+            closeEditModal();
+            renderModalRecordContent();
+            renderCalendar();
+            alert('儲存成功！');
+        }
+
+        // 新增工作
         function addJob() {
             const nameInput = document.getElementById('new-job-name');
             const wageInput = document.getElementById('new-job-wage');
@@ -473,20 +701,45 @@
         }
 
         function updateStatsUI() {
-            const currentJob = jobs.find(j => j.id === punchState.activeJobId) || jobs[0];
-            let income = 7 * (currentJob?.wage || 196);
-            document.getElementById('stats-total-income').innerText = `NT$${income.toLocaleString()}`;
-            
+            let totalHours = 0;
+            let totalDaysSet = new Set();
+            let totalIncome = 0;
+            let jobHoursMap = {};
+
+            jobs.forEach(job => jobHoursMap[job.id] = { name: job.name, hours: 0 });
+
+            for (let key in records) {
+                let rec = records[key];
+                let [day, jobId] = key.split('_').map(Number);
+                let job = jobs.find(j => j.id === jobId);
+                if (job && rec.hours) {
+                    let h = parseFloat(rec.hours);
+                    totalDaysSet.add(day);
+                    totalHours += h;
+                    if (jobHoursMap[jobId]) jobHoursMap[jobId].hours += h;
+
+                    let mult = rec.doublePay ? 2 : 1;
+                    totalIncome += h * job.wage * mult;
+                }
+            }
+
+            document.getElementById('stats-total-income').innerText = `NT$${totalIncome.toLocaleString()}`;
+            document.getElementById('stats-summary-text').innerText = `本月已出勤 ${totalDaysSet.size} 天 · 累計 ${totalHours}h`;
+            document.getElementById('stats-total-hours').innerText = totalHours + 'h';
+            document.getElementById('stats-avg-hours').innerText = (totalDaysSet.size > 0 ? (totalHours / totalDaysSet.size).toFixed(1) : 0) + 'h';
+            document.getElementById('stats-total-days').innerText = totalDaysSet.size;
+
             const breakdown = document.getElementById('stats-job-breakdown');
             breakdown.innerHTML = '';
-            jobs.forEach(job => {
+            for (let id in jobHoursMap) {
+                let item = jobHoursMap[id];
                 breakdown.innerHTML += `
                     <div class="flex justify-between items-center bg-gray-800/40 p-2.5 rounded-xl">
-                        <span>${job.name} (時薪 $${job.wage})</span>
-                        <span class="font-bold text-accent">7 小時</span>
+                        <span>${item.name}</span>
+                        <span class="font-bold text-accent">${item.hours} 小時</span>
                     </div>
                 `;
-            });
+            }
         }
 
         window.onload = function() {
