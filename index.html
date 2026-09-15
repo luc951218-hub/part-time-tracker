@@ -53,14 +53,14 @@
                     </div>
                 </div>
 
-                <!-- 本月總結小卡 -->
+                <!-- 本月總結小卡 (動態同步) -->
                 <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 shadow-lg grid grid-cols-4 text-center items-center">
                     <div>
-                        <div id="stat-days" class="text-lg font-bold">1</div>
+                        <div id="stat-days" class="text-lg font-bold">0</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">出勤天數</div>
                     </div>
                     <div>
-                        <div id="stat-hours" class="text-lg font-bold text-accent">7h</div>
+                        <div id="stat-hours" class="text-lg font-bold text-accent">0h</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">總時數</div>
                     </div>
                     <div>
@@ -68,7 +68,7 @@
                         <div class="text-[10px] text-gray-400 mt-0.5">雙倍薪資</div>
                     </div>
                     <div>
-                        <div id="stat-income" class="text-sm font-bold text-green-400">NT$1,372</div>
+                        <div id="stat-income" class="text-sm font-bold text-green-400">NT$0</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">本月收入</div>
                     </div>
                 </div>
@@ -160,14 +160,14 @@
                     </div>
                 </div>
 
-                <!-- 總收入大卡片 -->
+                <!-- 總收入大卡片 (動態同步) -->
                 <div class="bg-card rounded-2xl p-5 mb-4 border border-gray-800 shadow-lg text-center relative">
                     <div class="flex justify-center items-center space-x-2">
-                        <div id="stats-main-income" class="text-4xl font-bold text-white tracking-wider my-1">NT$1,372</div>
+                        <div id="stats-main-income" class="text-4xl font-bold text-white tracking-wider my-1">NT$0</div>
                         <span onclick="toggleStatsMask()" class="text-gray-400 cursor-pointer text-sm">👁️</span>
                     </div>
                     <div class="text-xs text-gray-400">本月收入</div>
-                    <div id="stats-main-sub" class="text-xs text-gray-400 mt-1">本月已出勤 1 天 · 累計 7h</div>
+                    <div id="stats-main-sub" class="text-xs text-gray-400 mt-1">本月已出勤 0 天 · 累計 0h</div>
                 </div>
 
                 <!-- 本月獎金 -->
@@ -192,18 +192,18 @@
                     <div class="text-[10px] text-gray-500 mt-1">設定本月或固定週期的收入目標後，這裡會顯示完成率與每日還需收入。</div>
                 </div>
 
-                <!-- 數據網格 -->
+                <!-- 數據網格 (動態同步) -->
                 <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 shadow-lg grid grid-cols-3 gap-y-4 text-center">
                     <div>
-                        <div id="st-grid-hours" class="text-lg font-bold text-white">7h</div>
+                        <div id="st-grid-hours" class="text-lg font-bold text-white">0h</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">總時數</div>
                     </div>
                     <div>
-                        <div id="st-grid-avg" class="text-lg font-bold text-white">7h</div>
+                        <div id="st-grid-avg" class="text-lg font-bold text-white">0h</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">日均工時</div>
                     </div>
                     <div>
-                        <div id="st-grid-days" class="text-lg font-bold text-white">1</div>
+                        <div id="st-grid-days" class="text-lg font-bold text-white">0</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">出勤天數</div>
                     </div>
                     <div>
@@ -215,18 +215,18 @@
                         <div class="text-[10px] text-gray-400 mt-0.5">雙倍薪資時數</div>
                     </div>
                     <div>
-                        <div id="st-grid-maxhours" class="text-lg font-bold text-white">7h</div>
+                        <div id="st-grid-maxhours" class="text-lg font-bold text-white">0h</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">單日最高工時</div>
                     </div>
                 </div>
 
-                <!-- ================= 各工作概況 (對應圖片 26 新增部分) ================= -->
+                <!-- ================= 各工作概況 (完整動態同步) ================= -->
                 <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 shadow-lg space-y-4">
                     <div class="text-sm font-semibold text-white">各工作概況</div>
                     <div class="text-xs text-gray-400">工時分布</div>
                     <!-- 比例進度條 -->
                     <div id="stats-job-dist-bar" class="w-full bg-gray-800 rounded-full h-2.5 flex overflow-hidden">
-                        <div class="bg-green-500 h-full" style="width: 100%;"></div>
+                        <div class="bg-gray-700 h-full w-full"></div>
                     </div>
                     <!-- 各工作明細清單 -->
                     <div id="stats-job-breakdown-list" class="space-y-3 pt-1">
@@ -239,11 +239,11 @@
                     <div class="text-sm font-semibold text-white mb-2">薪資概況</div>
                     <div class="flex justify-between items-center text-xs border-b border-gray-800 pb-2">
                         <span class="text-gray-400">日均收入</span>
-                        <span id="st-daily-income" class="font-bold text-white">NT$1,372</span>
+                        <span id="st-daily-income" class="font-bold text-white">NT$0</span>
                     </div>
                     <div class="flex justify-between items-center text-xs border-b border-gray-800 pb-2">
                         <span class="text-gray-400">平均時薪</span>
-                        <span id="st-avg-wage" class="font-bold text-white">NT$196/h</span>
+                        <span id="st-avg-wage" class="font-bold text-white">NT$0/h</span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-gray-400">設定時薪</span>
@@ -255,35 +255,12 @@
                 <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 shadow-lg space-y-3">
                     <div class="text-sm font-semibold text-white mb-2">出勤習慣</div>
                     <div class="flex justify-between items-center text-xs border-b border-gray-800 pb-2">
-                        <span class="text-gray-400">常見上班時間</span>
-                        <span class="font-bold text-white">09:00 <span class="text-gray-500 font-normal">1次</span></span>
-                    </div>
-                    <div class="flex justify-between items-center text-xs border-b border-gray-800 pb-2">
-                        <span class="text-gray-400">常見下班時間</span>
-                        <span class="font-bold text-white">17:00 <span class="text-gray-500 font-normal">1次</span></span>
-                    </div>
-                    <div class="flex justify-between items-center text-xs border-b border-gray-800 pb-2">
                         <span class="text-gray-400">平日出勤</span>
-                        <span id="st-weekday-count" class="font-bold text-white">1天</span>
+                        <span id="st-weekday-count" class="font-bold text-white">0天</span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-gray-400">假日出勤</span>
                         <span id="st-weekend-count" class="font-bold text-white">0天</span>
-                    </div>
-                </div>
-
-                <!-- 每日工時長條圖 -->
-                <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 shadow-lg">
-                    <div class="text-sm font-semibold text-white mb-3">每日工時</div>
-                    <div class="h-28 flex items-end justify-between space-x-1 pt-4 pb-2 border-b border-gray-800">
-                        <div class="w-full bg-amber-700/80 rounded-t h-[80%] flex flex-col items-center justify-start text-[9px] text-white pt-1">7h</div>
-                        <div class="w-full bg-gray-800 rounded-t h-[5%]"></div>
-                        <div class="w-full bg-gray-800 rounded-t h-[10%]"></div>
-                        <div class="w-full bg-gray-800 rounded-t h-[5%]"></div>
-                        <div class="w-full bg-gray-800 rounded-t h-[5%]"></div>
-                    </div>
-                    <div class="flex justify-between text-[10px] text-gray-500 mt-2">
-                        <span>1</span><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span>
                     </div>
                 </div>
 
@@ -293,42 +270,11 @@
                         <span class="text-sm font-semibold text-white">收入推估 (月底預測)</span>
                         <span class="text-[10px] bg-green-950 text-green-400 px-2 py-0.5 rounded border border-green-800 font-bold">已解鎖</span>
                     </div>
-                    <div id="stats-projection" class="text-2xl font-bold tracking-wider text-accent my-2">NT$ 5,488</div>
+                    <div id="stats-projection" class="text-2xl font-bold tracking-wider text-accent my-2">NT$ 0</div>
                     <div class="w-full bg-gray-800 rounded-full h-2 mb-2">
-                        <div class="bg-accent h-full rounded-full w-3/4"></div>
+                        <div class="bg-accent h-full rounded-full w-0"></div>
                     </div>
-                    <div class="text-[11px] text-gray-400 text-right">預估達成率 75%</div>
-                </div>
-
-                <!-- 每週收入趨勢 -->
-                <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 shadow-lg">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-sm font-semibold text-white">每週收入趨勢</span>
-                        <span class="text-[10px] bg-green-950 text-green-400 px-2 py-0.5 rounded border border-green-800 font-bold">已解鎖</span>
-                    </div>
-                    <div class="space-y-2.5 text-xs text-gray-300">
-                        <div class="flex justify-between items-center"><span>W1 (9/1 - 9/7)</span><div class="flex-1 mx-3 bg-gray-800 h-2 rounded-full overflow-hidden"><div class="bg-accent w-4/5 h-full"></div></div><span class="font-bold text-white">NT$1,372</span></div>
-                        <div class="flex justify-between items-center"><span>W2 (9/8 - 9/14)</span><div class="flex-1 mx-3 bg-gray-800 h-2 rounded-full overflow-hidden"><div class="bg-gray-700 w-1/5 h-full"></div></div><span class="text-gray-400">NT$0</span></div>
-                        <div class="flex justify-between items-center"><span>W3 (9/15 - 9/21)</span><div class="flex-1 mx-3 bg-gray-800 h-2 rounded-full overflow-hidden"><div class="bg-gray-700 w-1/5 h-full"></div></div><span class="text-gray-400">NT$0</span></div>
-                        <div class="flex justify-between items-center"><span>W4 (9/22 - 9/30)</span><div class="flex-1 mx-3 bg-gray-800 h-2 rounded-full overflow-hidden"><div class="bg-gray-700 w-1/5 h-full"></div></div><span class="text-gray-400">NT$0</span></div>
-                    </div>
-                </div>
-
-                <!-- 週間出勤分析 -->
-                <div class="bg-card rounded-2xl p-4 border border-gray-800 shadow-lg">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-sm font-semibold text-white">週間出勤分析</span>
-                        <span class="text-[10px] bg-green-950 text-green-400 px-2 py-0.5 rounded border border-green-800 font-bold">已解鎖</span>
-                    </div>
-                    <div class="grid grid-cols-7 gap-1.5 text-center">
-                        <div class="bg-gray-800/60 p-2 rounded-xl"><div class="text-[10px] text-gray-400">一</div><div class="h-10 bg-gray-800 rounded mt-1"></div></div>
-                        <div class="bg-gray-800/60 p-2 rounded-xl"><div class="text-[10px] text-gray-400">二</div><div class="h-10 bg-amber-700/80 rounded mt-1 flex items-center justify-center text-[10px] font-bold text-white">7h</div></div>
-                        <div class="bg-gray-800/60 p-2 rounded-xl"><div class="text-[10px] text-gray-400">三</div><div class="h-10 bg-gray-800 rounded mt-1"></div></div>
-                        <div class="bg-gray-800/60 p-2 rounded-xl"><div class="text-[10px] text-gray-400">四</div><div class="h-10 bg-gray-800 rounded mt-1"></div></div>
-                        <div class="bg-gray-800/60 p-2 rounded-xl"><div class="text-[10px] text-gray-400">五</div><div class="h-10 bg-gray-800 rounded mt-1"></div></div>
-                        <div class="bg-gray-800/60 p-2 rounded-xl"><div class="text-[10px] text-gray-400">六</div><div class="h-10 bg-gray-800 rounded mt-1"></div></div>
-                        <div class="bg-gray-800/60 p-2 rounded-xl"><div class="text-[10px] text-gray-400">日</div><div class="h-10 bg-gray-800 rounded mt-1"></div></div>
-                    </div>
+                    <div class="text-[11px] text-gray-400 text-right">預估達成率 0%</div>
                 </div>
             </div>
 
@@ -424,7 +370,7 @@
             </div>
         </div>
 
-        <!-- ================= 底部導覽列 (5個按鈕仿效截圖) ================= -->
+        <!-- ================= 底部導覽列 ================= -->
         <div class="absolute bottom-0 w-full px-4 pb-6 pt-2 bg-[#121212]/95 backdrop-blur-md border-t border-gray-800 z-30">
             <div class="flex justify-between items-center bg-card rounded-full px-3 py-2 border border-gray-800 shadow-2xl">
                 <button onclick="switchTab('record')" id="nav-record" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all cursor-pointer">
@@ -566,9 +512,7 @@
                     }
                 });
 
-                let isWorked = totalDayHours > 0 || day === 1;
-                if (day === 1 && totalDayHours === 0) totalDayHours = 7; // 預設9/1有7小時
-
+                let isWorked = totalDayHours > 0;
                 let classes = "h-10 w-10 mx-auto flex flex-col items-center justify-center rounded-xl text-sm transition-all cursor-pointer ";
                 classes += isWorked ? "bg-gray-800 text-white font-bold border border-accent/50 shadow-sm" : "text-gray-300 hover:bg-gray-800/50";
 
@@ -583,9 +527,9 @@
         }
 
         function updateMonthlySummary() {
-            let totalDaysSet = new Set([1]);
-            let totalHours = 7;
-            let totalIncome = 1372;
+            let totalDaysSet = new Set();
+            let totalHours = 0;
+            let totalIncome = 0;
 
             for (let key in records) {
                 let [day, jobId] = key.split('_').map(Number);
@@ -636,7 +580,7 @@
         function renderModalRecordContent() {
             const container = document.getElementById('modal-record-content');
             let key = `${currentDay}_${activeModalJobId}`;
-            let rec = records[key] || (currentDay === 1 ? { hours: 7, doublePay: false } : null);
+            let rec = records[key];
             if (rec && rec.hours) {
                 let job = jobs.find(j => j.id === activeModalJobId) || jobs[0];
                 let income = rec.hours * job.wage * (rec.doublePay ? 2 : 1);
@@ -661,6 +605,10 @@
         function openEditModal() {
             closeDayModal();
             document.getElementById('edit-date-title').innerText = `2026年9月${currentDay}日 週${currentWeekday}`;
+            let key = `${currentDay}_${activeModalJobId}`;
+            let rec = records[key] || {};
+            document.getElementById('edit-quick-hours').value = rec.hours || '';
+            document.getElementById('edit-double-pay').checked = rec.doublePay || false;
             document.getElementById('edit-modal').classList.remove('hidden');
         }
 
@@ -669,10 +617,14 @@
         }
 
         function saveEditModal() {
-            let hours = parseFloat(document.getElementById('edit-quick-hours').value) || 7;
+            let hours = parseFloat(document.getElementById('edit-quick-hours').value) || 0;
             let doublePay = document.getElementById('edit-double-pay').checked;
             let key = `${currentDay}_${activeModalJobId}`;
-            records[key] = { hours, doublePay };
+            if (hours > 0) {
+                records[key] = { hours, doublePay };
+            } else {
+                delete records[key];
+            }
             localStorage.setItem('records', JSON.stringify(records));
             closeEditModal();
             renderCalendar();
@@ -758,20 +710,14 @@
 
         // ================= 統計頁面數據更新與各工作概況 (圖 26) =================
         function updateStatsUI() {
-            let totalHours = 7;
-            let totalDays = 1;
-            let totalIncome = 1372;
-            let curWage = 196;
-
+            let totalHours = 0;
+            let grandTotalDays = new Set();
+            let totalIncome = 0;
             let jobStats = {};
+
             jobs.forEach(j => {
                 jobStats[j.id] = { name: j.name, wage: j.wage, hours: 0, days: new Set(), income: 0 };
             });
-
-            // 預設9/1給國科會7小時
-            jobStats[jobs[0].id].hours = 7;
-            jobStats[jobs[0].id].days.add(1);
-            jobStats[jobs[0].id].income = 7 * jobs[0].wage;
 
             for (let key in records) {
                 let [day, jobId] = key.split('_').map(Number);
@@ -786,69 +732,59 @@
                 }
             }
 
-            // 如果選了特定工作，只統計該工作；若選全部工作則加總
-            let grandTotalHours = 0;
-            let grandTotalIncome = 0;
-            let grandTotalDays = new Set();
+            let activeJobsToDisplay = activeJobId === 0 ? jobs : jobs.filter(j => j.id === activeJobId);
+
+            activeJobsToDisplay.forEach(j => {
+                let stat = jobStats[j.id] || { hours: 0, days: new Set(), income: 0 };
+                totalHours += stat.hours;
+                totalIncome += stat.income;
+                stat.days.forEach(d => grandTotalDays.add(d));
+            });
+
             let breakdownHtml = '';
             let barHtml = '';
             let colors = ['bg-green-500', 'bg-amber-500', 'bg-blue-500', 'bg-purple-500', 'bg-pink-500'];
             let colorIdx = 0;
 
-            // 先計算總和與各工作時數
-            let activeJobsToDisplay = activeJobId === 0 ? jobs : jobs.filter(j => j.id === activeJobId);
-
             activeJobsToDisplay.forEach(j => {
                 let stat = jobStats[j.id] || { hours: 0, days: new Set(), income: 0 };
-                grandTotalHours += stat.hours;
-                grandTotalIncome += stat.income;
-                stat.days.forEach(d => grandTotalDays.add(d));
-            });
-
-            if (grandTotalDays.size === 0) grandTotalDays.add(1);
-
-            activeJobsToDisplay.forEach(j => {
-                let stat = jobStats[j.id] || { hours: 0, days: new Set(), income: 0 };
-                let daysCount = stat.days.size || (stat.hours > 0 ? 1 : 0);
-                let pct = grandTotalHours > 0 ? Math.round((stat.hours / grandTotalHours) * 100) : 0;
+                let daysCount = stat.days.size;
+                let pct = totalHours > 0 ? Math.round((stat.hours / totalHours) * 100) : 0;
                 let colorClass = colors[colorIdx % colors.length];
                 colorIdx++;
 
-                if (stat.hours > 0 || activeJobId !== 0) {
-                    barHtml += `<div class="${colorClass} h-full" style="width: ${pct}%;"></div>`;
-                    breakdownHtml += `
-                        <div class="flex justify-between items-center pt-3 border-t border-gray-800/80 first:border-t-0 first:pt-0">
-                            <div class="flex items-center space-x-2.5">
-                                <div class="w-2.5 h-2.5 rounded-full ${colorClass}"></div>
-                                <div>
-                                    <div class="font-bold text-white text-sm">${j.name}</div>
-                                    <div class="text-xs text-gray-400 mt-0.5">${daysCount}天 · ${stat.hours}h</div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="text-xs text-gray-400">工時 ${pct}%</div>
-                                <div class="text-sm font-bold text-white">NT$${stat.income.toLocaleString()}</div>
+                barHtml += `<div class="${colorClass} h-full" style="width: ${pct}%;"></div>`;
+                breakdownHtml += `
+                    <div class="flex justify-between items-center pt-3 border-t border-gray-800/80 first:border-t-0 first:pt-0">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-2.5 h-2.5 rounded-full ${colorClass}"></div>
+                            <div>
+                                <div class="font-bold text-white text-sm">${j.name}</div>
+                                <div class="text-xs text-gray-400 mt-0.5">${daysCount}天 · ${stat.hours}h</div>
                             </div>
                         </div>
-                    `;
-                }
+                        <div class="text-right">
+                            <div class="text-xs text-gray-400">工時 ${pct}%</div>
+                            <div class="text-sm font-bold text-white">NT$${stat.income.toLocaleString()}</div>
+                        </div>
+                    </div>
+                `;
             });
 
             document.getElementById('stats-job-dist-bar').innerHTML = barHtml || '<div class="bg-gray-700 h-full w-full"></div>';
             document.getElementById('stats-job-breakdown-list').innerHTML = breakdownHtml || '<div class="text-xs text-gray-500 text-center py-2">尚無工作資料</div>';
 
-            let displayIncome = activeJobId === 0 ? totalIncome : (jobStats[activeJobId]?.income || 0);
-            let displayHours = activeJobId === 0 ? totalHours : (jobStats[activeJobId]?.hours || 0);
-            let displayDays = activeJobId === 0 ? grandTotalDays.size : (jobStats[activeJobId]?.days.size || 0);
-
-            document.getElementById('stats-main-income').innerText = isStatsMasked ? 'NT$••••' : `NT$${displayIncome.toLocaleString()}`;
-            document.getElementById('stats-main-sub').innerText = `本月已出勤 ${displayDays} 天 · 累計 ${displayHours}h`;
-            document.getElementById('st-grid-hours').innerText = displayHours + 'h';
-            document.getElementById('st-grid-avg').innerText = (displayDays > 0 ? (displayHours / displayDays).toFixed(1) : displayHours) + 'h';
+            let displayDays = grandTotalDays.size;
+            document.getElementById('stats-main-income').innerText = isStatsMasked ? 'NT$••••' : `NT$${totalIncome.toLocaleString()}`;
+            document.getElementById('stats-main-sub').innerText = `本月已出勤 ${displayDays} 天 · 累計 ${totalHours}h`;
+            document.getElementById('st-grid-hours').innerText = totalHours + 'h';
+            document.getElementById('st-grid-avg').innerText = (displayDays > 0 ? (totalHours / displayDays).toFixed(1) : 0) + 'h';
             document.getElementById('st-grid-days').innerText = displayDays;
-            document.getElementById('st-grid-maxhours').innerText = displayHours + 'h';
-            document.getElementById('st-daily-income').innerText = `NT$${displayIncome.toLocaleString()}`;
+            document.getElementById('st-grid-maxhours').innerText = totalHours + 'h';
+            document.getElementById('st-daily-income').innerText = `NT$${totalIncome.toLocaleString()}`;
+            document.getElementById('st-avg-wage').innerText = `NT$${activeJobId === 0 ? (jobs[0]?.wage || 196) : (jobs.find(j=>j.id===activeJobId)?.wage || 196)}/h`;
             document.getElementById('st-weekday-count').innerText = displayDays + '天';
+            document.getElementById('stats-projection').innerText = `NT$ ${(totalIncome * 3).toLocaleString()}`;
         }
 
         function toggleStatsMask() {
@@ -906,3 +842,4 @@
     </script>
 </body>
 </html>
+
