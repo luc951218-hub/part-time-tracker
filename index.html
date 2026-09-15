@@ -2,18 +2,17 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>工讀薪水與打卡系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        * { touch-action: manipulation; }
         body { background-color: #121212; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         .bg-card { background-color: #1c1c1e; }
         .text-accent { color: #d6b290; }
         .bg-accent { background-color: #d6b290; color: #3e2723; }
         .bg-accent-dark { background-color: #3a2e26; color: #d6b290; }
-        /* Hide scrollbar for Chrome, Safari and Opera */
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        /* Hide scrollbar for IE, Edge and Firefox */
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
@@ -22,7 +21,7 @@
     <!-- 模擬手機螢幕容器 -->
     <div class="w-full max-w-md flex flex-col h-screen relative overflow-hidden bg-[#121212]">
         
-        <!-- 內容頁面容器 (透過 JS 切換顯示) -->
+        <!-- 內容頁面容器 -->
         <div id="app-container" class="flex-1 overflow-y-auto no-scrollbar pb-28 pt-4 px-4">
             
             <!-- 1. 紀錄頁面 (Record) -->
@@ -166,7 +165,7 @@
                 </div>
             </div>
 
-            <!-- 5. 設定頁面 (Settings) - 讓使用者自訂工作與時薪 -->
+            <!-- 5. 設定頁面 (Settings) -->
             <div id="page-settings" class="tab-page hidden">
                 <h1 class="text-xl font-bold mb-4 pt-2">設定</h1>
 
@@ -205,7 +204,36 @@
 
         </div>
 
-        <!-- 底部導覽列 (Bottom Navigation) -->
+        <!-- 📅 日期詳細資訊彈出面板 (Bottom Sheet Modal) -->
+        <div id="day-modal" class="fixed inset-0 bg-black/70 z-50 flex flex-col justify-end hidden backdrop-blur-sm transition-all">
+            <div class="bg-[#1c1c1e] rounded-t-3xl p-5 border-t border-gray-800 max-h-[85vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-200">
+                
+                <!-- 彈跳視窗標題與關閉按鈕 -->
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
+                    <h2 id="modal-date-title" class="text-lg font-bold text-white">2026年9月15日 週二</h2>
+                    <button onclick="closeDayModal()" class="w-7 h-7 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white font-bold">✕</button>
+                </div>
+
+                <!-- 工作標籤列 (動態載入所有工作) -->
+                <div id="modal-job-pills" class="flex space-x-2 overflow-x-auto no-scrollbar mb-4 pb-1">
+                    <!-- 動態帶入工作按鈕 -->
+                </div>
+
+                <!-- 當日紀錄詳情卡片 -->
+                <div class="bg-gray-800/60 rounded-2xl p-6 border border-gray-700/50 flex flex-col items-center justify-center text-center my-2">
+                    <div class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center text-xl mb-2 text-accent">🕒</div>
+                    <div class="text-sm font-semibold text-gray-300">尚無紀錄</div>
+                    <div class="text-xs text-gray-500 mt-1">這一天還沒有建立打卡或排班資料</div>
+                </div>
+
+                <!-- 編輯 / 補打卡按鈕 -->
+                <button onclick="closeDayModal()" class="mt-4 bg-accent rounded-xl py-3.5 font-bold text-sm text-center shadow-lg hover:opacity-90 transition-opacity">
+                    📝 編輯 / 補打卡
+                </button>
+            </div>
+        </div>
+
+        <!-- 底部導覽列 -->
         <div class="absolute bottom-0 w-full px-4 pb-6 pt-2 bg-[#121212]/95 backdrop-blur-md border-t border-gray-800">
             <div class="flex justify-between items-center bg-card rounded-full px-2 py-1.5 border border-gray-800 shadow-xl">
                 <button onclick="switchTab('record')" id="nav-record" class="flex flex-col items-center py-1 text-accent w-1/5 transition-all">
@@ -234,7 +262,6 @@
     </div>
 
     <script>
-        // 預設資料與 LocalStorage 初始化
         let jobs = JSON.parse(localStorage.getItem('jobs')) || [
             { id: 1, name: '國科會', wage: 196 },
             { id: 2, name: '主要工讀', wage: 185 }
@@ -247,7 +274,6 @@
             isClockedIn: false
         };
 
-        // 頁面切換邏輯
         function switchTab(tabId) {
             document.querySelectorAll('.tab-page').forEach(page => page.classList.add('hidden'));
             document.getElementById('page-' + tabId).classList.remove('hidden');
@@ -264,23 +290,28 @@
             if (tabId === 'record') renderCalendar();
         }
 
-        // 渲染 2026年9月 月曆
+        // 渲染 2026年9月 月曆 (支援點擊彈出面板)
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = '';
-            // 2026年9月1日是星期二 (0:日, 1:一, 2:二 ...) -> 前面有2個空白
-            const firstDayIndex = 2; 
+            const firstDayIndex = 2; // 9月1日星期二
             const totalDays = 30;
 
             for (let i = 0; i < firstDayIndex; i++) {
                 grid.innerHTML += `<div></div>`;
             }
 
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+
             for (let day = 1; day <= totalDays; day++) {
-                let isWorked = (day === 1); // 假設9月1日有打卡紀錄
+                let isWorked = (day === 1);
                 let isSelected = (day === 15);
                 
-                let classes = "h-9 w-9 mx-auto flex flex-col items-center justify-center rounded-xl text-sm transition-all ";
+                // 計算星期幾 (2026/9/1 是星期二，依序遞增)
+                let dayOfWeekIndex = (firstDayIndex + day - 1) % 7;
+                let weekdayStr = weekdays[dayOfWeekIndex];
+
+                let classes = "h-9 w-9 mx-auto flex flex-col items-center justify-center rounded-xl text-sm transition-all cursor-pointer ";
                 if (isSelected) {
                     classes += "border border-accent text-accent font-bold bg-[#3a2e26]/40";
                 } else if (isWorked) {
@@ -290,7 +321,7 @@
                 }
 
                 grid.innerHTML += `
-                    <div class="${classes}">
+                    <div onclick="openDayModal(${day}, '${weekdayStr}')" class="${classes}">
                         <span>${day}</span>
                         ${isWorked ? '<span class="text-[9px] text-accent font-normal">7h</span>' : ''}
                     </div>
@@ -298,7 +329,35 @@
             }
         }
 
-        // 新增工作
+        // 開啟日期詳細面板
+        function openDayModal(day, weekday) {
+            const modal = document.getElementById('day-modal');
+            const title = document.getElementById('modal-date-title');
+            const jobPillsContainer = document.getElementById('modal-job-pills');
+
+            title.innerText = `2026年9月${day}日 週${weekday}`;
+
+            // 動態產生工作 pills (模擬截圖中的工作分類按鈕)
+            jobPillsContainer.innerHTML = '';
+            jobs.forEach((job, index) => {
+                let activeClass = index === 0 ? 'bg-[#3a2e26] border border-accent text-accent font-bold' : 'bg-gray-800 text-gray-300 border border-gray-700';
+                jobPillsContainer.innerHTML += `
+                    <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs whitespace-nowrap ${activeClass}">
+                        <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                        <span>${job.name}</span>
+                    </div>
+                `;
+            });
+
+            modal.classList.remove('hidden');
+        }
+
+        // 關閉日期詳細面板
+        function closeDayModal() {
+            const modal = document.getElementById('day-modal');
+            modal.classList.add('hidden');
+        }
+
         function addJob() {
             const nameInput = document.getElementById('new-job-name');
             const wageInput = document.getElementById('new-job-wage');
@@ -320,7 +379,6 @@
             alert('工作新增成功！');
         }
 
-        // 刪除工作
         function deleteJob(id) {
             if (jobs.length <= 1) {
                 alert('至少需保留一項工作！');
@@ -332,7 +390,6 @@
             updatePunchJobOptions();
         }
 
-        // 渲染工作清單
         function renderJobList() {
             const container = document.getElementById('job-list-container');
             container.innerHTML = '';
@@ -349,7 +406,6 @@
             });
         }
 
-        // 更新打卡頁面的工作下拉選單
         function updatePunchJobOptions() {
             const select = document.getElementById('punch-job-select');
             select.innerHTML = '';
@@ -367,7 +423,6 @@
             updatePunchUI();
         }
 
-        // 打卡功能模擬
         function clockIn() {
             const now = new Date();
             punchState.inTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -390,7 +445,6 @@
             const currentJob = jobs.find(j => j.id === punchState.activeJobId) || jobs[0];
             if (currentJob) {
                 document.getElementById('current-job-wage').innerText = `時薪 NT$${currentJob.wage}`;
-                // 假設打卡滿7小時計算
                 let hours = punchState.outTime ? 7 : (punchState.inTime ? 4 : 0);
                 let income = hours * currentJob.wage;
                 document.getElementById('today-income-display').innerText = `NT$${income.toLocaleString()}`;
@@ -435,7 +489,6 @@
             });
         }
 
-        // 初始化載入
         window.onload = function() {
             updatePunchJobOptions();
             renderCalendar();
