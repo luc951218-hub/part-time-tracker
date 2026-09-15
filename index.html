@@ -1,3 +1,6 @@
+原來是因為之前的版本「打卡時段」輸入的時間只會儲存文字，沒有自動幫你計算成總時數！
+我已經幫你加上了自動計算時數功能：現在只要你有填寫「上午上班/下班」或「下午上班/下班」的時間，系統就會自動幫你算出總時數並計入薪資（如果「快速填入時數」沒填的話），點擊日期與編輯也會完全連動！
+以下是為你更新好的完整 HTML 程式碼，請直接整篇複製並覆蓋到 GitHub 的 index.html 裡面：
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -225,25 +228,22 @@
                     <div class="text-xs text-gray-500 mt-1">這一天還沒有建立打卡或排班資料</div>
                 </div>
 
-                <!-- 編輯 / 補打卡按鈕 (點擊跳轉到第二個編輯畫面) -->
+                <!-- 編輯 / 補打卡按鈕 -->
                 <button onclick="openEditModal()" class="mt-4 bg-accent rounded-xl py-3.5 font-bold text-sm text-center shadow-lg hover:opacity-90 transition-opacity">
                     📝 編輯 / 補打卡
                 </button>
             </div>
         </div>
 
-        <!-- 📝 2. 編輯與補打卡設定畫面 (對應第二張截圖) -->
+        <!-- 📝 2. 編輯與補打卡設定畫面 -->
         <div id="edit-modal" class="fixed inset-0 bg-[#121212] z-50 flex flex-col hidden overflow-y-auto">
-            <!-- 頂部導覽列 -->
             <div class="flex justify-between items-center px-4 py-4 border-b border-gray-800 sticky top-0 bg-[#121212]/95 backdrop-blur-md z-10">
                 <button onclick="closeEditModal()" class="text-gray-300 text-sm font-medium">取消</button>
                 <h2 class="text-base font-bold text-white">編輯 / 補打卡</h2>
                 <button onclick="saveEditModal()" class="text-accent text-sm font-bold">儲存</button>
             </div>
 
-            <!-- 內容區塊 -->
             <div class="p-4 space-y-4 pb-20">
-                <!-- 日期與工作提示 -->
                 <div class="bg-card rounded-2xl p-4 border border-gray-800 flex items-center space-x-3">
                     <div class="text-2xl">📅</div>
                     <div>
@@ -254,11 +254,10 @@
 
                 <!-- 快速填入時數 -->
                 <div class="bg-card rounded-2xl p-4 border border-gray-800">
-                    <div class="text-xs text-gray-400 mb-2">快速填入時數</div>
+                    <div class="text-xs text-gray-400 mb-2">快速填入時數 (若空白則依下方打卡時段自動計算)</div>
                     <div class="flex items-center space-x-2">
-                        <input id="edit-quick-hours" type="number" placeholder="輸入小時數 (例: 7)" class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-accent">
+                        <input id="edit-quick-hours" type="number" step="0.5" placeholder="輸入總小時數 (例: 7)" class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-accent">
                     </div>
-                    <div class="text-[10px] text-gray-500 mt-2">不計入打卡時段，獨立計算</div>
                 </div>
 
                 <!-- 雙倍薪資 -->
@@ -278,7 +277,7 @@
 
                 <!-- 打卡時段 -->
                 <div class="bg-card rounded-2xl p-4 border border-gray-800 space-y-3">
-                    <div class="text-xs text-gray-400 mb-1">打卡時段</div>
+                    <div class="text-xs text-gray-400 mb-1">打卡時段 (自動計算時數)</div>
                     
                     <div class="flex justify-between items-center py-2 border-b border-gray-800">
                         <span class="text-sm text-gray-300">上午上班</span>
@@ -329,13 +328,11 @@
     </div>
 
     <script>
-        // 資料初始化
         let jobs = JSON.parse(localStorage.getItem('jobs')) || [
             { id: 1, name: '國科會', wage: 196 },
             { id: 2, name: '主要工讀', wage: 185 }
         ];
 
-        // 儲存每天每份工作的紀錄：格式 { "9-15_1": { hours: 7, doublePay: false, in1, out1, in2, out2 } }
         let records = JSON.parse(localStorage.getItem('records')) || {};
 
         let punchState = JSON.parse(localStorage.getItem('punchState')) || {
@@ -345,7 +342,6 @@
             isClockedIn: false
         };
 
-        // 當前選中的日期與工作
         let currentDay = 15;
         let currentWeekday = '二';
         let activeModalJobId = jobs[0]?.id || 1;
@@ -369,7 +365,6 @@
             }
         }
 
-        // 渲染 2026年9月 月曆
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = '';
@@ -385,7 +380,6 @@
                 let dayOfWeekIndex = (firstDayIndex + day - 1) % 7;
                 let weekdayStr = weekdays[dayOfWeekIndex];
 
-                // 計算這一天所有工作的總時數
                 let totalDayHours = 0;
                 jobs.forEach(job => {
                     let key = `${day}_${job.id}`;
@@ -413,15 +407,11 @@
             updateMonthlySummary();
         }
 
-        // 計算並更新本月總結數據
         function updateMonthlySummary() {
             let totalDaysSet = new Set();
             let totalHours = 0;
             let totalDoubleDays = 0;
             let totalIncome = 0;
-            let jobHoursMap = {};
-
-            jobs.forEach(job => jobHoursMap[job.id] = 0);
 
             for (let key in records) {
                 let rec = records[key];
@@ -431,7 +421,6 @@
                     let h = parseFloat(rec.hours);
                     totalDaysSet.add(day);
                     totalHours += h;
-                    jobHoursMap[jobId] = (jobHoursMap[jobId] || 0) + h;
 
                     let wageMultiplier = rec.doublePay ? 2 : 1;
                     if (rec.doublePay) totalDoubleDays++;
@@ -445,7 +434,6 @@
             document.getElementById('stat-income').innerText = 'NT$' + totalIncome.toLocaleString();
         }
 
-        // 開啟日期詳細面板
         function openDayModal(day, weekday) {
             currentDay = day;
             currentWeekday = weekday;
@@ -461,7 +449,6 @@
             renderCalendar();
         }
 
-        // 渲染彈出面板裡的工作切換按鈕
         function renderModalJobPills() {
             const container = document.getElementById('modal-job-pills');
             container.innerHTML = '';
@@ -491,7 +478,6 @@
             renderModalJobPills();
         }
 
-        // 渲染彈出面板內當日該工作的詳細紀錄
         function renderModalRecordContent() {
             const contentContainer = document.getElementById('modal-record-content');
             let key = `${currentDay}_${activeModalJobId}`;
@@ -509,8 +495,8 @@
                             <span class="text-accent">${rec.hours} 小時 ${rec.doublePay ? '(雙倍薪資)' : ''}</span>
                         </div>
                         <div class="text-xs text-gray-400 flex justify-between">
-                            <span>上班打卡: ${rec.in1 || '未設定'}</span>
-                            <span>下班打卡: ${rec.out1 || '未設定'}</span>
+                            <span>上午上班: ${rec.in1 || '未設定'}</span>
+                            <span>上午下班: ${rec.out1 || '未設定'}</span>
                         </div>
                         <div class="text-xs text-gray-400 flex justify-between">
                             <span>下午上班: ${rec.in2 || '未設定'}</span>
@@ -530,12 +516,11 @@
             }
         }
 
-        // 開啟第二張圖的編輯設定畫面
         function openEditModal() {
             const editModal = document.getElementById('edit-modal');
             document.getElementById('edit-date-title').innerText = `2026年9月${currentDay}日 週${currentWeekday}`;
             
-            let job = jobs.get ? null : jobs.find(j => j.id === activeModalJobId);
+            let job = jobs.find(j => j.id === activeModalJobId);
             document.getElementById('edit-job-title').innerText = job ? job.name : '工作';
 
             let key = `${currentDay}_${activeModalJobId}`;
@@ -555,24 +540,38 @@
             document.getElementById('edit-modal').classList.add('hidden');
         }
 
-        // 儲存編輯設定
+        // 計算時間差（小時）
+        function calculateDuration(timeIn, timeOut) {
+            if (!timeIn || !timeOut) return 0;
+            let [h1, m1] = timeIn.split(':').map(Number);
+            let [h2, m2] = timeOut.split(':').map(Number);
+            let mins1 = h1 * 60 + m1;
+            let mins2 = h2 * 60 + m2;
+            let diff = mins2 - mins1;
+            return diff > 0 ? diff / 60 : 0;
+        }
+
         function saveEditModal() {
-            let hours = document.getElementById('edit-quick-hours').value;
+            let manualHours = parseFloat(document.getElementById('edit-quick-hours').value);
             let doublePay = document.getElementById('edit-double-pay').checked;
             let in1 = document.getElementById('time-in-1').value;
             let out1 = document.getElementById('time-out-1').value;
             let in2 = document.getElementById('time-in-2').value;
             let out2 = document.getElementById('time-out-2').value;
 
-            let key = `${currentDay}_${activeModalJobId}`;
-            
-            if (!hours && (in1 || out1 || in2 || out2)) {
-                // 如果有填時段但沒填總時數，預設算7小時或自動計算
-                hours = 7;
+            let hours = 0;
+            if (!isNaN(manualHours) && manualHours > 0) {
+                hours = manualHours;
+            } else {
+                let session1 = calculateDuration(in1, out1);
+                let session2 = calculateDuration(in2, out2);
+                hours = Math.round((session1 + session2) * 10) / 10;
             }
 
+            let key = `${currentDay}_${activeModalJobId}`;
+            
             records[key] = {
-                hours: hours ? parseFloat(hours) : 0,
+                hours: hours,
                 doublePay,
                 in1, out1, in2, out2
             };
@@ -582,10 +581,9 @@
             closeEditModal();
             renderModalRecordContent();
             renderCalendar();
-            alert('儲存成功！');
+            alert('儲存成功！已自動計算時數：' + hours + ' 小時');
         }
 
-        // 新增工作
         function addJob() {
             const nameInput = document.getElementById('new-job-name');
             const wageInput = document.getElementById('new-job-wage');
@@ -749,3 +747,4 @@
     </script>
 </body>
 </html>
+
