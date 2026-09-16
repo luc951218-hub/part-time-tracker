@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>工讀薪水與打卡系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%23121212'/><circle cx='256' cy='256' r='140' fill='none' stroke='%23d6b290' stroke-width='32'/><path d='M256 150v106l70 70' fill='none' stroke='%23d6b290' stroke-width='32' stroke-linecap='round'/></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%23121212'/><circle cx='256' cy='256' r='140' fill='none' stroke='%23d6b290' stroke-width='32'/><path d='M256 150v106l70 70' fill='none' stroke='%23d6b290' stroke-width='32' stroke-linecap='round'/></svg>">
     <style>
         * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
         body { background-color: #121212; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -44,7 +46,6 @@
                         <button onclick="changeMonth(1)" class="w-7 h-7 bg-gray-800 rounded-full flex items-center justify-center text-gray-300 cursor-pointer hover:bg-gray-700 text-xs">›</button>
                     </div>
 
-                    <!-- 移除右上角多餘圖示，保持乾淨 -->
                     <div class="w-6"></div>
                 </div>
 
@@ -116,7 +117,6 @@
             <div id="page-punch" class="tab-page hidden">
                 <div class="flex justify-between items-center mb-3">
                     <div class="text-xs text-gray-400">一杯咖啡，開啟好心情</div>
-                    <!-- 移除多餘的星號閃亮圖示 -->
                     <div class="w-6"></div>
                 </div>
 
@@ -225,6 +225,49 @@
                     </div>
                     <div id="stats-job-breakdown-list" class="space-y-3 pt-1"></div>
                 </div>
+
+                <!-- 薪資概況 -->
+                <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 shadow-lg space-y-3">
+                    <div class="text-sm font-semibold text-white mb-2">薪資概況</div>
+                    <div class="flex justify-between items-center text-xs border-b border-gray-800 pb-2">
+                        <span class="text-gray-400">日均收入</span>
+                        <span id="st-daily-income" class="font-bold text-white">NT$0</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs border-b border-gray-800 pb-2">
+                        <span class="text-gray-400">平均時薪</span>
+                        <span id="st-avg-wage" class="font-bold text-white">NT$0/h</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400">設定時薪</span>
+                        <span class="text-accent cursor-pointer font-medium hover:underline" onclick="switchTab('settings')">多時薪 ›</span>
+                    </div>
+                </div>
+
+                <!-- 出勤習慣 -->
+                <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 shadow-lg space-y-3">
+                    <div class="text-sm font-semibold text-white mb-2">出勤習慣</div>
+                    <div class="flex justify-between items-center text-xs border-b border-gray-800 pb-2">
+                        <span class="text-gray-400">平日出勤</span>
+                        <span id="st-weekday-count" class="font-bold text-white">0天</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-400">假日出勤</span>
+                        <span id="st-weekend-count" class="font-bold text-white">0天</span>
+                    </div>
+                </div>
+
+                <!-- 收入推估 -->
+                <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 shadow-lg relative">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-semibold text-white">收入推估 (月底預測)</span>
+                        <span class="text-[10px] bg-green-950 text-green-400 px-2 py-0.5 rounded border border-green-800 font-bold">已解鎖</span>
+                    </div>
+                    <div id="stats-projection" class="text-2xl font-bold tracking-wider text-accent my-2">NT$ 0</div>
+                    <div class="w-full bg-gray-800 rounded-full h-2 mb-2">
+                        <div class="bg-accent h-full rounded-full w-0"></div>
+                    </div>
+                    <div class="text-[11px] text-gray-400 text-right">預估達成率 0%</div>
+                </div>
             </div>
 
             <!-- ================= 5. 設定頁面 (Settings) ================= -->
@@ -247,7 +290,7 @@
                     <div id="job-list-container" class="space-y-2 max-h-48 overflow-y-auto"></div>
                 </div>
 
-                <!-- ☁️ 連結 Google 雲端硬碟的備份與還原機制 -->
+                <!-- ☁️ 雲端硬碟備份與還原機制 -->
                 <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 shadow-lg space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-semibold text-accent">☁️ Google 雲端硬碟備份與還原</span>
@@ -264,6 +307,17 @@
                             <span>📥 從雲端還原</span>
                             <input type="file" id="import-file" accept=".json" onchange="importBackup(event)" class="hidden">
                         </label>
+                    </div>
+                </div>
+
+                <div class="bg-card rounded-2xl p-4 border border-gray-800 shadow-lg space-y-4">
+                    <div class="flex justify-between items-center text-sm">
+                        <span>自動扣除勞保</span>
+                        <input type="checkbox" class="accent-amber-600 w-4 h-4 cursor-pointer">
+                    </div>
+                    <div class="flex justify-between items-center text-sm border-t border-gray-800 pt-3">
+                        <span>自動扣除健保</span>
+                        <input type="checkbox" class="accent-amber-600 w-4 h-4 cursor-pointer">
                     </div>
                 </div>
             </div>
@@ -328,6 +382,34 @@
                     <span class="text-sm font-medium text-white">雙倍薪資</span>
                     <input id="edit-double-pay" type="checkbox" class="w-5 h-5 accent-[#d6b290] rounded cursor-pointer">
                 </div>
+
+                <div class="bg-card rounded-2xl p-4 border border-gray-800 relative">
+                    <div class="flex justify-between items-center cursor-pointer" onclick="togglePunchModeDropdown()">
+                        <span class="text-sm font-medium text-white">打卡模式</span>
+                        <div class="flex items-center space-x-1 text-xs text-accent bg-gray-800 px-3 py-1.5 rounded-full border border-gray-700">
+                            <span>⚙️</span>
+                            <span id="current-punch-mode-label">上下午分班制</span>
+                            <span>▼</span>
+                        </div>
+                    </div>
+
+                    <div id="punch-mode-dropdown" class="hidden absolute right-4 top-16 bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl py-2 w-48 z-20">
+                        <div onclick="selectPunchMode('split', '上下午分班制')" class="px-4 py-2.5 text-xs text-gray-200 hover:bg-gray-800 cursor-pointer flex justify-between items-center">
+                            <span>上下午分班制</span>
+                            <span id="check-split" class="text-accent font-bold">✓</span>
+                        </div>
+                        <div onclick="selectPunchMode('single', '單班制')" class="px-4 py-2.5 text-xs text-gray-200 hover:bg-gray-800 cursor-pointer flex justify-between items-center">
+                            <span>單班制</span>
+                            <span id="check-single" class="text-accent font-bold hidden">✓</span>
+                        </div>
+                        <div onclick="selectPunchMode('multi', '多班打卡')" class="px-4 py-2.5 text-xs text-gray-200 hover:bg-gray-800 cursor-pointer flex justify-between items-center">
+                            <span>多班打卡</span>
+                            <span id="check-multi" class="text-accent font-bold hidden">✓</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="time-slots-container" class="bg-card rounded-2xl p-4 border border-gray-800 space-y-3"></div>
             </div>
         </div>
 
@@ -383,27 +465,27 @@
             </div>
         </div>
 
-        <!-- ================= 底部導覽列 (仿效截圖圖示與風格) ================= -->
+        <!-- ================= 底部導覽列 ================= -->
         <div class="absolute bottom-0 w-full px-4 pb-6 pt-2 bg-[#121212]/95 backdrop-blur-md border-t border-gray-800 z-30">
             <div class="flex justify-between items-center bg-card rounded-full px-3 py-2 border border-gray-800 shadow-2xl">
                 <button onclick="switchTab('record')" id="nav-record" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all cursor-pointer">
-                    <span class="text-lg">📅</span>
+                    <span class="text-xl">📅</span>
                     <span class="text-[10px] mt-0.5 font-medium">紀錄</span>
                 </button>
                 <button onclick="switchTab('schedule')" id="nav-schedule" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all cursor-pointer">
-                    <span class="text-lg">📋</span>
+                    <span class="text-xl">📋</span>
                     <span class="text-[10px] mt-0.5 font-medium">排班</span>
                 </button>
                 <button onclick="switchTab('punch')" id="nav-punch" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all cursor-pointer">
-                    <span class="text-lg">⏱️</span>
+                    <span class="text-xl">⏱️</span>
                     <span class="text-[10px] mt-0.5 font-medium">打卡</span>
                 </button>
                 <button onclick="switchTab('stats')" id="nav-stats" class="flex flex-col items-center py-1 text-accent w-1/5 transition-all cursor-pointer">
-                    <span class="text-lg">📊</span>
+                    <span class="text-xl">📊</span>
                     <span class="text-[10px] mt-0.5 font-medium">統計</span>
                 </button>
                 <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center py-1 text-gray-400 w-1/5 transition-all cursor-pointer">
-                    <span class="text-lg">⚙️</span>
+                    <span class="text-xl">⚙️</span>
                     <span class="text-[10px] mt-0.5 font-medium">設定</span>
                 </button>
             </div>
@@ -430,6 +512,7 @@
         let currentScheduleDay = 15;
         let currentScheduleWeekday = '二';
         let activeModalJobId = jobs[0]?.id || 1;
+        let currentPunchMode = 'split';
         let isIncomeMasked = false;
         let isStatsMasked = false;
 
@@ -638,6 +721,7 @@
                             <span>${job.name}</span>
                             <span class="text-accent">${rec.hours} 小時 ${rec.doublePay ? '(雙倍薪資)' : ''}</span>
                         </div>
+                        <div class="text-xs text-gray-400">模式: ${rec.mode === 'single' ? '單班制' : (rec.mode === 'multi' ? '多班打卡' : '上下午分班制')}</div>
                         <div class="text-sm font-bold text-green-400 pt-2 text-right">預估收入：NT$ ${income.toLocaleString()}</div>
                     </div>
                 `;
@@ -659,8 +743,20 @@
             let key = `${viewYear}-${viewMonth + 1}-${currentDay}_${activeModalJobId}`;
             let rec = records[key] || {};
 
+            currentPunchMode = rec.mode || 'split';
+            updatePunchModeUI(currentPunchMode);
+
             document.getElementById('edit-quick-hours').value = rec.hours || '';
             document.getElementById('edit-double-pay').checked = rec.doublePay || false;
+
+            setTimeout(() => {
+                if (document.getElementById('time-in-1')) document.getElementById('time-in-1').value = rec.in1 || '';
+                if (document.getElementById('time-out-1')) document.getElementById('time-out-1').value = rec.out1 || '';
+                if (document.getElementById('time-in-2')) document.getElementById('time-in-2').value = rec.in2 || '';
+                if (document.getElementById('time-out-2')) document.getElementById('time-out-2').value = rec.out2 || '';
+                if (document.getElementById('time-in-3')) document.getElementById('time-in-3').value = rec.in3 || '';
+                if (document.getElementById('time-out-3')) document.getElementById('time-out-3').value = rec.out3 || '';
+            }, 50);
 
             document.getElementById('edit-modal').classList.remove('hidden');
         }
@@ -669,24 +765,128 @@
             document.getElementById('edit-modal').classList.add('hidden');
         }
 
+        function togglePunchModeDropdown() {
+            document.getElementById('punch-mode-dropdown').classList.toggle('hidden');
+        }
+
+        function selectPunchMode(mode, label) {
+            currentPunchMode = mode;
+            document.getElementById('current-punch-mode-label').innerText = label;
+            document.getElementById('punch-mode-dropdown').classList.add('hidden');
+            updatePunchModeUI(mode);
+        }
+
+        function updatePunchModeUI(mode) {
+            document.getElementById('check-split').classList.add('hidden');
+            document.getElementById('check-single').classList.add('hidden');
+            document.getElementById('check-multi').classList.add('hidden');
+
+            if (mode === 'split') document.getElementById('check-split').classList.remove('hidden');
+            if (mode === 'single') document.getElementById('check-single').classList.remove('hidden');
+            if (mode === 'multi') document.getElementById('check-multi').classList.remove('hidden');
+
+            const container = document.getElementById('time-slots-container');
+            container.innerHTML = `<div class="text-xs text-gray-400 mb-1">打卡時段 (點擊時間即可選擇並自動計算時數)</div>`;
+
+            if (mode === 'single') {
+                container.innerHTML += `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-800">
+                        <span class="text-sm text-gray-300">上班打卡</span>
+                        <input id="time-in-1" type="time" class="bg-gray-800 text-sm text-accent px-4 py-2 rounded-xl border border-gray-700 outline-none cursor-pointer">
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-sm text-gray-300">下班打卡</span>
+                        <input id="time-out-1" type="time" class="bg-gray-800 text-sm text-accent px-4 py-2 rounded-xl border border-gray-700 outline-none cursor-pointer">
+                    </div>
+                `;
+            } else if (mode === 'multi') {
+                container.innerHTML += `
+                    <div class="text-xs font-semibold text-accent mt-2">早班</div>
+                    <div class="flex justify-between items-center py-1 border-b border-gray-800"><span class="text-xs text-gray-300">上班</span><input id="time-in-1" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none cursor-pointer"></div>
+                    <div class="flex justify-between items-center py-1 border-b border-gray-800"><span class="text-xs text-gray-300">下班</span><input id="time-out-1" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none cursor-pointer"></div>
+                    
+                    <div class="text-xs font-semibold text-accent mt-2">午班</div>
+                    <div class="flex justify-between items-center py-1 border-b border-gray-800"><span class="text-xs text-gray-300">上班</span><input id="time-in-2" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none cursor-pointer"></div>
+                    <div class="flex justify-between items-center py-1 border-b border-gray-800"><span class="text-xs text-gray-300">下班</span><input id="time-out-2" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none cursor-pointer"></div>
+
+                    <div class="text-xs font-semibold text-accent mt-2">晚班</div>
+                    <div class="flex justify-between items-center py-1 border-b border-gray-800"><span class="text-xs text-gray-300">上班</span><input id="time-in-3" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none cursor-pointer"></div>
+                    <div class="flex justify-between items-center py-1"><span class="text-xs text-gray-300">下班</span><input id="time-out-3" type="time" class="bg-gray-800 text-xs text-accent px-3 py-1.5 rounded-lg border border-gray-700 outline-none cursor-pointer"></div>
+                `;
+            } else {
+                container.innerHTML += `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-800">
+                        <span class="text-sm text-gray-300">上午上班</span>
+                        <input id="time-in-1" type="time" class="bg-gray-800 text-sm text-accent px-4 py-2 rounded-xl border border-gray-700 outline-none cursor-pointer">
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-800">
+                        <span class="text-sm text-gray-300">上午下班</span>
+                        <input id="time-out-1" type="time" class="bg-gray-800 text-sm text-accent px-4 py-2 rounded-xl border border-gray-700 outline-none cursor-pointer">
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-800">
+                        <span class="text-sm text-gray-300">下午上班</span>
+                        <input id="time-in-2" type="time" class="bg-gray-800 text-sm text-accent px-4 py-2 rounded-xl border border-gray-700 outline-none cursor-pointer">
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-sm text-gray-300">下午下班</span>
+                        <input id="time-out-2" type="time" class="bg-gray-800 text-sm text-accent px-4 py-2 rounded-xl border border-gray-700 outline-none cursor-pointer">
+                    </div>
+                `;
+            }
+        }
+
+        function calculateDuration(timeIn, timeOut) {
+            if (!timeIn || !timeOut) return 0;
+            let [h1, m1] = timeIn.split(':').map(Number);
+            let [h2, m2] = timeOut.split(':').map(Number);
+            let mins1 = h1 * 60 + m1;
+            let mins2 = h2 * 60 + m2;
+            let diff = mins2 - mins1;
+            return diff > 0 ? diff / 60 : 0;
+        }
+
         function saveEditModal() {
-            let hours = parseFloat(document.getElementById('edit-quick-hours').value) || 0;
+            let manualHours = parseFloat(document.getElementById('edit-quick-hours').value);
             let doublePay = document.getElementById('edit-double-pay').checked;
+            
+            let in1 = document.getElementById('time-in-1') ? document.getElementById('time-in-1').value : '';
+            let out1 = document.getElementById('time-out-1') ? document.getElementById('time-out-1').value : '';
+            let in2 = document.getElementById('time-in-2') ? document.getElementById('time-in-2').value : '';
+            let out2 = document.getElementById('time-out-2') ? document.getElementById('time-out-2').value : '';
+            let in3 = document.getElementById('time-in-3') ? document.getElementById('time-in-3').value : '';
+            let out3 = document.getElementById('time-out-3') ? document.getElementById('time-out-3').value : '';
+
+            let hours = 0;
+            if (!isNaN(manualHours) && manualHours > 0) {
+                hours = manualHours;
+            } else {
+                let s1 = calculateDuration(in1, out1);
+                let s2 = calculateDuration(in2, out2);
+                let s3 = calculateDuration(in3, out3);
+                hours = Math.round((s1 + s2 + s3) * 10) / 10;
+            }
+
             let key = `${viewYear}-${viewMonth + 1}-${currentDay}_${activeModalJobId}`;
             if (hours > 0) {
-                records[key] = { hours, doublePay };
+                records[key] = {
+                    hours: hours,
+                    doublePay,
+                    mode: currentPunchMode,
+                    in1, out1, in2, out2, in3, out3
+                };
             } else {
                 delete records[key];
             }
+
             localStorage.setItem('records', JSON.stringify(records));
             closeEditModal();
             renderCalendar();
             updateMonthlySummary();
             updateStatsUI();
-            alert('儲存成功！');
+            alert('儲存成功！已自動計算時數：' + hours + ' 小時');
         }
 
-        // ================= 排班月曆 =================
+        // ================= 排班月曆與彈出面板 =================
         function renderScheduleCalendar() {
             const grid = document.getElementById('schedule-calendar-grid');
             grid.innerHTML = '';
@@ -906,6 +1106,10 @@
             document.getElementById('st-grid-avg').innerText = (displayDays > 0 ? (totalHours / displayDays).toFixed(1) : 0) + 'h';
             document.getElementById('st-grid-days').innerText = displayDays;
             document.getElementById('st-grid-maxhours').innerText = totalHours + 'h';
+            document.getElementById('st-daily-income').innerText = `NT$${totalIncome.toLocaleString()}`;
+            document.getElementById('st-avg-wage').innerText = `NT$${activeJobId === 0 ? (jobs[0]?.wage || 196) : (jobs.find(j=>j.id===activeJobId)?.wage || 196)}/h`;
+            document.getElementById('st-weekday-count').innerText = displayDays + '天';
+            document.getElementById('stats-projection').innerText = `NT$ ${(totalIncome * 3).toLocaleString()}`;
             document.getElementById('stats-month-label').innerText = `${viewYear}年 ${viewMonth + 1}月`;
         }
 
@@ -1040,3 +1244,4 @@
     </script>
 </body>
 </html>
+
