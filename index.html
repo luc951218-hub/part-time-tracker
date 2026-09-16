@@ -274,7 +274,7 @@
             <div id="page-settings" class="tab-page hidden">
                 <h1 class="text-xl font-bold mb-4 pt-2">設定</h1>
 
-                <!-- 工作與時薪管理 (完美支援編輯與刪除，對應圖一) -->
+                <!-- 工作與時薪管理 -->
                 <div class="bg-card rounded-2xl p-4 mb-4 border border-gray-800 shadow-lg">
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-sm font-semibold text-accent">💼 我的工作與時薪管理</span>
@@ -954,6 +954,7 @@
             document.getElementById('sch-time-out').value = sch.outTime || '17:00';
             if (sch.jobId) select.value = sch.jobId;
 
+            document.getElementById('schedule-edit-modal').classList.add('hidden'); // Fix typo, should be remove
             document.getElementById('schedule-edit-modal').classList.remove('hidden');
         }
 
@@ -1118,7 +1119,7 @@
             updateStatsUI();
         }
 
-        // ================= 雲端硬碟備份與還原機制 =================
+        // ================= 雲端硬碟備份與還原機制 (修復Blob下載) =================
         function exportGoogleDriveBackup() {
             const backupData = {
                 jobs: jobs,
@@ -1126,14 +1127,17 @@
                 schedules: schedules,
                 activeJobId: activeJobId
             };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+            const dataStr = JSON.stringify(backupData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
             const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `part-time-tracker-google-drive-backup-${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.href = url;
+            downloadAnchor.download = `part-time-tracker-google-drive-backup-${new Date().toISOString().slice(0,10)}.json`;
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
-            downloadAnchor.remove();
-            alert('備份檔已下載！請將此檔案上傳至您的 Google 雲端硬碟即可完成雲端備份。');
+            document.body.removeChild(downloadAnchor);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            alert('備份檔已準備下載！請將此檔案儲存至您的 Google 雲端硬碟。');
         }
 
         function importBackup(event) {
@@ -1244,4 +1248,3 @@
     </script>
 </body>
 </html>
-
