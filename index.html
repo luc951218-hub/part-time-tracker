@@ -28,17 +28,23 @@
             <!-- ================= 1. 紀錄頁面 (Record) ================= -->
             <div id="page-record" class="tab-page">
                 <div class="flex justify-between items-center mb-4">
-                    <div onclick="openJobSelectorModal()" class="flex items-center space-x-2 bg-gray-800 px-3.5 py-1.5 rounded-full text-sm cursor-pointer border border-gray-700/60 shadow-sm">
+                    <div onclick="openJobSelectorModal()" class="flex items-center space-x-2 bg-gray-800 px-3 py-1.5 rounded-full text-sm cursor-pointer border border-gray-700/60 shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-accent"></span>
                         <span id="record-job-label" class="font-medium text-white">全部工作</span>
                         <span class="text-xs text-gray-400">▼</span>
                     </div>
-                    <div class="text-center">
-                        <div class="text-[10px] text-gray-400">2026年</div>
-                        <div class="text-lg font-bold tracking-wider">9月</div>
+
+                    <!-- 月份切換控制列 -->
+                    <div class="flex items-center space-x-2">
+                        <button onclick="changeMonth(-1)" class="w-7 h-7 bg-gray-800 rounded-full flex items-center justify-center text-gray-300 cursor-pointer hover:bg-gray-700 text-xs">‹</button>
+                        <div class="text-center min-w-[64px]">
+                            <div class="text-[9px] text-gray-400"><span id="calendar-year-label">2026年</span></div>
+                            <div class="text-sm font-bold tracking-wider"><span id="calendar-month-label">9月</span></div>
+                        </div>
+                        <button onclick="changeMonth(1)" class="w-7 h-7 bg-gray-800 rounded-full flex items-center justify-center text-gray-300 cursor-pointer hover:bg-gray-700 text-xs">›</button>
                     </div>
-                    <div class="flex space-x-3 text-gray-300">
-                        <span class="cursor-pointer text-sm">ℹ️</span>
+
+                    <div class="flex space-x-2 text-gray-300">
                         <span class="cursor-pointer text-sm" onclick="renderCalendar()">🔄</span>
                     </div>
                 </div>
@@ -83,18 +89,23 @@
             <!-- ================= 2. 排班頁面 (Schedule) ================= -->
             <div id="page-schedule" class="tab-page hidden">
                 <div class="flex justify-between items-center mb-4">
-                    <div onclick="openJobSelectorModal()" class="flex items-center space-x-2 bg-gray-800 px-3.5 py-1.5 rounded-full text-sm cursor-pointer border border-gray-700/60 shadow-sm">
+                    <div onclick="openJobSelectorModal()" class="flex items-center space-x-2 bg-gray-800 px-3 py-1.5 rounded-full text-sm cursor-pointer border border-gray-700/60 shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-accent"></span>
                         <span id="schedule-job-label" class="font-medium text-white">全部工作</span>
                         <span class="text-xs text-gray-400">▼</span>
                     </div>
-                    <div class="text-center">
-                        <div class="text-[10px] text-gray-400">2026年</div>
-                        <div class="text-lg font-bold tracking-wider">9月</div>
+
+                    <!-- 排班頁面同步月份切換列 -->
+                    <div class="flex items-center space-x-2">
+                        <button onclick="changeMonth(-1)" class="w-7 h-7 bg-gray-800 rounded-full flex items-center justify-center text-gray-300 cursor-pointer hover:bg-gray-700 text-xs">‹</button>
+                        <div class="text-center min-w-[64px]">
+                            <div class="text-[9px] text-gray-400"><span id="schedule-year-label">2026年</span></div>
+                            <div class="text-sm font-bold tracking-wider"><span id="schedule-month-label">9月</span></div>
+                        </div>
+                        <button onclick="changeMonth(1)" class="w-7 h-7 bg-gray-800 rounded-full flex items-center justify-center text-gray-300 cursor-pointer hover:bg-gray-700 text-xs">›</button>
                     </div>
-                    <div class="flex space-x-3 text-gray-300">
-                        <span class="cursor-pointer text-xs bg-gray-800 px-2.5 py-1 rounded-full border border-gray-700">000</span>
-                        <span class="cursor-pointer text-xs bg-gray-800 px-2.5 py-1 rounded-full border border-gray-700">👥</span>
+
+                    <div class="flex space-x-2 text-gray-300">
                         <span class="cursor-pointer text-base" onclick="switchTab('settings')">⚙️</span>
                     </div>
                 </div>
@@ -155,7 +166,7 @@
             <div id="page-stats" class="tab-page hidden">
                 <div class="flex justify-center items-center mb-4">
                     <div class="bg-gray-800/80 px-4 py-1.5 rounded-full text-xs font-bold text-white flex items-center space-x-1 cursor-pointer hover:bg-gray-700 border border-gray-700">
-                        <span>2026年 9月</span>
+                        <span id="stats-month-label">2026年 9月</span>
                         <span>▼</span>
                     </div>
                 </div>
@@ -503,6 +514,11 @@
         let records = JSON.parse(localStorage.getItem('records')) || {};
         let schedules = JSON.parse(localStorage.getItem('schedules')) || {};
         let activeJobId = parseInt(localStorage.getItem('activeJobId')) || 0;
+        
+        // 動態月份狀態 (預設 2026年 9月)
+        let viewYear = 2026;
+        let viewMonth = 8; // 0-indexed (8 = 9月)
+
         let currentDay = 15;
         let currentWeekday = '二';
         let currentScheduleDay = 15;
@@ -527,6 +543,21 @@
             if (tabId === 'record') { renderCalendar(); updateMonthlySummary(); }
             if (tabId === 'schedule') renderScheduleCalendar();
             if (tabId === 'punch') updatePunchUI();
+        }
+
+        // ================= 月份切換函數 =================
+        function changeMonth(direction) {
+            viewMonth += direction;
+            if (viewMonth > 11) {
+                viewMonth = 0;
+                viewYear++;
+            } else if (viewMonth < 0) {
+                viewMonth = 11;
+                viewYear--;
+            }
+            renderCalendar();
+            renderScheduleCalendar();
+            updateMonthlySummary();
         }
 
         // ================= 工作選擇面板 =================
@@ -590,12 +621,17 @@
             document.getElementById('current-punch-job-name').innerText = name;
         }
 
-        // ================= 紀錄月曆渲染 =================
+        // ================= 紀錄動態月曆渲染 =================
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = '';
-            const firstDayIndex = 2; // 9月1日星期二
-            const totalDays = 30;
+
+            document.getElementById('calendar-year-label').innerText = viewYear + '年';
+            document.getElementById('calendar-month-label').innerText = (viewMonth + 1) + '月';
+
+            const firstDay = new Date(viewYear, viewMonth, 1);
+            const firstDayIndex = firstDay.getDay();
+            const totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
             const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
 
             for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += `<div></div>`;
@@ -603,10 +639,11 @@
             for (let day = 1; day <= totalDays; day++) {
                 let weekdayStr = weekdays[(firstDayIndex + day - 1) % 7];
                 let totalDayHours = 0;
+                let dateKey = `${viewYear}-${viewMonth + 1}-${day}`;
 
                 jobs.forEach(job => {
                     if (activeJobId === 0 || activeJobId === job.id) {
-                        let key = `${day}_${job.id}`;
+                        let key = `${dateKey}_${job.id}`;
                         if (records[key] && records[key].hours) totalDayHours += parseFloat(records[key].hours);
                     }
                 });
@@ -616,7 +653,7 @@
                 classes += isWorked ? "bg-gray-800 text-white font-bold border border-accent/50 shadow-sm" : "text-gray-300 hover:bg-gray-800/50";
 
                 grid.innerHTML += `
-                    <div onclick="openDayModal(${day}, '${weekdayStr}')" class="${classes}">
+                    <div onclick="openDayModal(${viewYear}, ${viewMonth + 1}, ${day}, '${weekdayStr}')" class="${classes}">
                         <span>${day}</span>
                         ${isWorked ? `<span class="text-[9px] text-accent font-normal">${totalDayHours}h</span>` : ''}
                     </div>
@@ -629,16 +666,21 @@
             let totalDaysSet = new Set();
             let totalHours = 0;
             let totalIncome = 0;
+            let prefix = `${viewYear}-${viewMonth + 1}-`;
 
             for (let key in records) {
-                let [day, jobId] = key.split('_').map(Number);
-                if (activeJobId === 0 || activeJobId === jobId) {
-                    let rec = records[key];
-                    let job = jobs.find(j => j.id === jobId);
-                    if (job && rec.hours) {
-                        totalDaysSet.add(day);
-                        totalHours += parseFloat(rec.hours);
-                        totalIncome += rec.hours * job.wage * (rec.doublePay ? 2 : 1);
+                if (key.startsWith(prefix)) {
+                    let parts = key.split('_');
+                    let jobId = parseInt(parts[1]);
+                    if (activeJobId === 0 || activeJobId === jobId) {
+                        let rec = records[key];
+                        let job = jobs.find(j => j.id === jobId);
+                        if (job && rec.hours) {
+                            let dayPart = parts[0].split('-')[2];
+                            totalDaysSet.add(dayPart);
+                            totalHours += parseFloat(rec.hours);
+                            totalIncome += rec.hours * job.wage * (rec.doublePay ? 2 : 1);
+                        }
                     }
                 }
             }
@@ -646,12 +688,13 @@
             document.getElementById('stat-days').innerText = totalDaysSet.size;
             document.getElementById('stat-hours').innerText = totalHours + 'h';
             document.getElementById('stat-income').innerText = 'NT$' + totalIncome.toLocaleString();
+            document.getElementById('stats-month-label').innerText = `${viewYear}年 ${viewMonth + 1}月`;
         }
 
-        function openDayModal(day, weekday) {
+        function openDayModal(year, month, day, weekday) {
             currentDay = day;
             currentWeekday = weekday;
-            document.getElementById('modal-date-title').innerText = `2026年9月${day}日 週${weekday}`;
+            document.getElementById('modal-date-title').innerText = `${year}年${month}月${day}日 週${weekday}`;
             renderModalJobPills();
             document.getElementById('day-modal').classList.remove('hidden');
         }
@@ -681,7 +724,7 @@
 
         function renderModalRecordContent() {
             const container = document.getElementById('modal-record-content');
-            let key = `${currentDay}_${activeModalJobId}`;
+            let key = `${viewYear}-${viewMonth + 1}-${currentDay}_${activeModalJobId}`;
             let rec = records[key];
             if (rec && rec.hours) {
                 let job = jobs.find(j => j.id === activeModalJobId) || jobs[0];
@@ -707,11 +750,11 @@
 
         function openEditModal() {
             closeDayModal();
-            document.getElementById('edit-date-title').innerText = `2026年9月${currentDay}日 週${currentWeekday}`;
+            document.getElementById('edit-date-title').innerText = `${viewYear}年${viewMonth + 1}月${currentDay}日 週${currentWeekday}`;
             let job = jobs.find(j => j.id === activeModalJobId);
             document.getElementById('edit-job-title').innerText = job ? job.name : '工作';
 
-            let key = `${currentDay}_${activeModalJobId}`;
+            let key = `${viewYear}-${viewMonth + 1}-${currentDay}_${activeModalJobId}`;
             let rec = records[key] || {};
 
             currentPunchMode = rec.mode || 'split';
@@ -837,7 +880,7 @@
                 hours = Math.round((s1 + s2 + s3) * 10) / 10;
             }
 
-            let key = `${currentDay}_${activeModalJobId}`;
+            let key = `${viewYear}-${viewMonth + 1}-${currentDay}_${activeModalJobId}`;
             if (hours > 0) {
                 records[key] = {
                     hours: hours,
@@ -861,16 +904,23 @@
         function renderScheduleCalendar() {
             const grid = document.getElementById('schedule-calendar-grid');
             grid.innerHTML = '';
-            const firstDayIndex = 2;
-            const totalDays = 30;
+
+            document.getElementById('schedule-year-label').innerText = viewYear + '年';
+            document.getElementById('schedule-month-label').innerText = (viewMonth + 1) + '月';
+
+            const firstDay = new Date(viewYear, viewMonth, 1);
+            const firstDayIndex = firstDay.getDay();
+            const totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
             const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
 
             for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += `<div></div>`;
 
             for (let day = 1; day <= totalDays; day++) {
                 let weekdayStr = weekdays[(firstDayIndex + day - 1) % 7];
-                let hasSchedule = schedules[day] && schedules[day].length > 0;
-                let isSelected = (day === 15);
+                let schKey = `${viewYear}-${viewMonth + 1}-${day}`;
+                let hasSchedule = schedules[schKey] && schedules[schKey].length > 0;
+                let isSelected = (day === 15 && viewMonth === 8 && viewYear === 2026);
+                
                 let classes = "h-10 w-10 mx-auto flex flex-col items-center justify-center rounded-xl text-sm transition-all cursor-pointer ";
                 if (isSelected && !hasSchedule) {
                     classes += "border border-accent text-accent font-bold bg-[#3a2e26]/40";
@@ -881,7 +931,7 @@
                 }
 
                 grid.innerHTML += `
-                    <div onclick="openScheduleModal(${day}, '${weekdayStr}')" class="${classes}">
+                    <div onclick="openScheduleModal(${viewYear}, ${viewMonth + 1}, ${day}, '${weekdayStr}')" class="${classes}">
                         <span>${day}</span>
                         ${hasSchedule ? '<span class="text-[9px] text-accent font-normal">班</span>' : ''}
                     </div>
@@ -889,12 +939,13 @@
             }
         }
 
-        function openScheduleModal(day, weekday) {
+        function openScheduleModal(year, month, day, weekday) {
             currentScheduleDay = day;
             currentScheduleWeekday = weekday;
-            document.getElementById('schedule-modal-date').innerText = `${day}月 週${weekday}`;
+            document.getElementById('schedule-modal-date').innerText = `${month}/${day} 週${weekday}`;
             const statusText = document.getElementById('schedule-status-text');
-            const schList = schedules[day];
+            let schKey = `${year}-${month}-${day}`;
+            const schList = schedules[schKey];
 
             if (schList && schList.length > 0) {
                 let job = jobs.find(j => j.id == schList[0].jobId);
@@ -912,14 +963,15 @@
 
         function openScheduleEdit() {
             closeScheduleModal();
-            document.getElementById('sch-edit-date').innerText = `2026年9月${currentScheduleDay}日 週${currentScheduleWeekday}`;
+            document.getElementById('sch-edit-date').innerText = `${viewYear}年${viewMonth + 1}月${currentScheduleDay}日 週${currentScheduleWeekday}`;
             const select = document.getElementById('sch-job-select');
             select.innerHTML = '';
             jobs.forEach(job => {
                 select.innerHTML += `<option value="${job.id}">${job.name} (時薪 $${job.wage})</option>`;
             });
 
-            let sch = schedules[currentScheduleDay]?.[0] || {};
+            let schKey = `${viewYear}-${viewMonth + 1}-${currentScheduleDay}`;
+            let sch = schedules[schKey]?.[0] || {};
             document.getElementById('sch-time-in').value = sch.inTime || '09:00';
             document.getElementById('sch-time-out').value = sch.outTime || '17:00';
             if (sch.jobId) select.value = sch.jobId;
@@ -935,8 +987,9 @@
             let jobId = document.getElementById('sch-job-select').value;
             let inTime = document.getElementById('sch-time-in').value;
             let outTime = document.getElementById('sch-time-out').value;
+            let schKey = `${viewYear}-${viewMonth + 1}-${currentScheduleDay}`;
 
-            schedules[currentScheduleDay] = [{ jobId, inTime, outTime }];
+            schedules[schKey] = [{ jobId, inTime, outTime }];
             localStorage.setItem('schedules', JSON.stringify(schedules));
 
             closeScheduleEdit();
@@ -1003,21 +1056,26 @@
             let grandTotalDays = new Set();
             let totalIncome = 0;
             let jobStats = {};
+            let prefix = `${viewYear}-${viewMonth + 1}-`;
 
             jobs.forEach(j => {
                 jobStats[j.id] = { name: j.name, wage: j.wage, hours: 0, days: new Set(), income: 0 };
             });
 
             for (let key in records) {
-                let [day, jobId] = key.split('_').map(Number);
-                let rec = records[key];
-                let j = jobs.find(x => x.id === jobId);
-                if (j && rec.hours) {
-                    let h = parseFloat(rec.hours);
-                    if (!jobStats[jobId]) jobStats[jobId] = { name: j.name, wage: j.wage, hours: 0, days: new Set(), income: 0 };
-                    jobStats[jobId].hours += h;
-                    jobStats[jobId].days.add(day);
-                    jobStats[jobId].income += h * j.wage * (rec.doublePay ? 2 : 1);
+                if (key.startsWith(prefix)) {
+                    let parts = key.split('_');
+                    let jobId = parseInt(parts[1]);
+                    let rec = records[key];
+                    let j = jobs.find(x => x.id === jobId);
+                    if (j && rec.hours) {
+                        let h = parseFloat(rec.hours);
+                        if (!jobStats[jobId]) jobStats[jobId] = { name: j.name, wage: j.wage, hours: 0, days: new Set(), income: 0 };
+                        jobStats[jobId].hours += h;
+                        let dayPart = parts[0].split('-')[2];
+                        jobStats[jobId].days.add(dayPart);
+                        jobStats[jobId].income += h * j.wage * (rec.doublePay ? 2 : 1);
+                    }
                 }
             }
 
@@ -1074,6 +1132,7 @@
             document.getElementById('st-avg-wage').innerText = `NT$${activeJobId === 0 ? (jobs[0]?.wage || 196) : (jobs.find(j=>j.id===activeJobId)?.wage || 196)}/h`;
             document.getElementById('st-weekday-count').innerText = displayDays + '天';
             document.getElementById('stats-projection').innerText = `NT$ ${(totalIncome * 3).toLocaleString()}`;
+            document.getElementById('stats-month-label').innerText = `${viewYear}年 ${viewMonth + 1}月`;
         }
 
         function toggleStatsMask() {
@@ -1160,7 +1219,7 @@
         function renderJobList() {
             const container = document.getElementById('job-list-container');
             container.innerHTML = '';
-            jobs.forEach(job => {
+            jobs.jobs?.forEach ? jobs.forEach(job => {
                 container.innerHTML += `
                     <div class="flex justify-between items-center bg-gray-800/60 px-3 py-2.5 rounded-xl border border-gray-700">
                         <div>
@@ -1170,7 +1229,7 @@
                         <button onclick="deleteJob(${job.id})" class="text-red-400 text-xs px-2 py-1 rounded bg-red-950/40 cursor-pointer">刪除</button>
                     </div>
                 `;
-            });
+            }) : null;
         }
 
         window.onload = function() {
